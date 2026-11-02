@@ -76,6 +76,8 @@ ctx.fillStyle='#e2e9df';ctx.font='9px monospace';ctx.textAlign='center';ctx.fill
 ctx.fillStyle='#ffad6c';for(const p of [c.a,c.b]){ctx.beginPath();ctx.arc(ox+p.x*g,oy+p.y*g,3,0,7);ctx.fill()}
 ctx.restore()}
 function draw(){let dpr=devicePixelRatio||1,{w,h,g,ox,oy}=geom();canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);canvas.dataset.g=g;canvas.dataset.x=ox;canvas.dataset.y=oy;ctx.clearRect(0,0,w,h);
+/* Repères discrets sur chaque nœud de grille ; le point visé s'illumine au survol. */
+for(let gx=0;gx<=GW;gx++)for(let gy=0;gy<=GH;gy++){let active=hover&&hover.x===gx&&hover.y===gy;ctx.beginPath();ctx.arc(ox+gx*g,oy+gy*g,active?3.1:1.35,0,Math.PI*2);ctx.fillStyle=active?'rgba(255,190,112,.92)':'rgba(180,205,190,.16)';ctx.fill()}
 for(let wi=0;wi<wires.length;wi++){const path=wires[wi];ctx.beginPath();path.forEach((p,i)=>i?ctx.lineTo(ox+p.x*g,oy+p.y*g):ctx.moveTo(ox+p.x*g,oy+p.y*g));ctx.strokeStyle='#80d4c0';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();if(eraseHit&&eraseHit.wi===wi){ctx.beginPath();ctx.moveTo(ox+path[eraseHit.si].x*g,oy+path[eraseHit.si].y*g);ctx.lineTo(ox+path[eraseHit.si+1].x*g,oy+path[eraseHit.si+1].y*g);ctx.strokeStyle='#ff4f50';ctx.lineWidth=5;ctx.stroke()}}
 if(wirePath.length){ctx.beginPath();wirePath.forEach((p,i)=>i?ctx.lineTo(ox+p.x*g,oy+p.y*g):ctx.moveTo(ox+p.x*g,oy+p.y*g));if(wireMode&&hover)ctx.lineTo(ox+hover.x*g,oy+hover.y*g);ctx.strokeStyle='#b7e67d';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([])}
 for(let c of components)drawComponent(c,g,ox,oy,false);
@@ -83,7 +85,7 @@ if(hover&&(wireMode||selected)&&!eraseMode){ctx.beginPath();ctx.arc(ox+hover.x*g
 /* aperçu du composant à poser (sélection + survol, ou glisser-déposer) */
 if(hover&&(selected||drag)&&!wireMode){let type=selected||drag.type,cc=clampCenter(hover),pv={type,cx:cc.x,cy:cc.y,rot:pendingRot,value:TYPES[type].value,closed:true};setGeom(pv);drawComponent(pv,g,ox,oy,true)}
 }
-function pos(e){let r=canvas.getBoundingClientRect(),g=+canvas.dataset.g,x=+canvas.dataset.x,y=+canvas.dataset.y;return {x:Math.max(0,Math.min(GW,Math.round((e.clientX-r.left-x)/g))),y:Math.max(0,Math.min(GH,Math.round((e.clientY-r.top-y)/g)))}}
+function pos(e){let r=canvas.getBoundingClientRect(),g=+canvas.dataset.g,x=+canvas.dataset.x,y=+canvas.dataset.y,px=e.clientX-r.left,py=e.clientY-r.top,p={x:Math.max(0,Math.min(GW,Math.round((px-x)/g))),y:Math.max(0,Math.min(GH,Math.round((py-y)/g)))};let best=null,bd=14;function consider(q){let d=Math.hypot(px-(x+q.x*g),py-(y+q.y*g));if(d<bd){bd=d;best=q}}for(let c of components){consider(c.a);consider(c.b)}for(let path of wires)for(let q of path)consider(q);return best?{x:best.x,y:best.y}:p}
 function wireAt(e){let r=canvas.getBoundingClientRect(),{g,ox,oy}=geom(),px=e.clientX-r.left,py=e.clientY-r.top,best=null,bd=8;for(let wi=wires.length-1;wi>=0;wi--){let path=wires[wi];for(let si=0;si<path.length-1;si++){let a=path[si],b=path[si+1],x1=ox+a.x*g,y1=oy+a.y*g,x2=ox+b.x*g,y2=oy+b.y*g,vx=x2-x1,vy=y2-y1,t=Math.max(0,Math.min(1,((px-x1)*vx+(py-y1)*vy)/(vx*vx+vy*vy||1))),d=Math.hypot(px-x1-t*vx,py-y1-t*vy);if(d<bd){bd=d;best={wi,si}}}}return best}
 function eraseSegment(hit){if(!hit)return false;let path=wires[hit.wi],left=path.slice(0,hit.si+1),right=path.slice(hit.si+1);wires.splice(hit.wi,1,...[left,right].filter(p=>p.length>1));eraseHit=null;draw();run();say('Segment de fil supprimé.');return true}
 function syncTools(){document.querySelector('#wireBtn').classList.toggle('active',wireMode&&!eraseMode);document.querySelector('#eraseBtn').classList.toggle('active',eraseMode);wrap.classList.toggle('erase-mode',eraseMode)}
@@ -94,15 +96,17 @@ let pendingRot=0; // orientation de l’aperçu avant pose (0 = horizontal)
 function clearSelection(){selected=null;wireMode=true;document.querySelectorAll('.part').forEach(x=>x.classList.remove('selected'));syncTools()}
 function placeComponent(type,p){let cc=clampCenter(p),c={type,cx:cc.x,cy:cc.y,rot:pendingRot,value:TYPES[type].value,closed:true,burnt:false};setGeom(c);components.push(c);return c}
 /* distance d'un point (px) au segment du composant, pour détecter le clic */
-function hitComponent(e){let r=canvas.getBoundingClientRect(),{g,ox,oy}=geom(),px=e.clientX-r.left,py=e.clientY-r.top,best=null,bd=1e9;for(let i=components.length-1;i>=0;i--){let c=components[i],x1=ox+c.a.x*g,y1=oy+c.a.y*g,x2=ox+c.b.x*g,y2=oy+c.b.y*g,vx=x2-x1,vy=y2-y1,L2=vx*vx+vy*vy||1,t=Math.max(0,Math.min(1,((px-x1)*vx+(py-y1)*vy)/L2)),qx=x1+t*vx,qy=y1+t*vy,d=Math.hypot(px-qx,py-qy);if(d<bd){bd=d;best=c}}return bd<=16?{c:best,px,py,g,ox,oy}:null}
+function hitComponent(e){let r=canvas.getBoundingClientRect(),{g,ox,oy}=geom(),px=e.clientX-r.left,py=e.clientY-r.top,best=null,bd=1e9,terminal=null;for(let i=components.length-1;i>=0;i--){let c=components[i],x1=ox+c.a.x*g,y1=oy+c.a.y*g,x2=ox+c.b.x*g,y2=oy+c.b.y*g,da=Math.hypot(px-x1,py-y1),db=Math.hypot(px-x2,py-y2);if(Math.min(da,db)<=12&&(!terminal||Math.min(da,db)<terminal.d))terminal={c,p:da<=db?c.a:c.b,d:Math.min(da,db)};let vx=x2-x1,vy=y2-y1,L2=vx*vx+vy*vy||1,t=Math.max(0,Math.min(1,((px-x1)*vx+(py-y1)*vy)/L2)),qx=x1+t*vx,qy=y1+t*vy,d=Math.hypot(px-qx,py-qy);/* Exclure la zone des bornes du hit-test de rotation. */if(Math.min(da,db)>11&&d<bd){bd=d;best=c}}return terminal?{c:terminal.c,terminal:terminal.p,terminalDistance:terminal.d,px,py,g,ox,oy}:bd<=16?{c:best,px,py,g,ox,oy}:null}
 canvas.addEventListener('mousemove',e=>{mousePoint=e;hover=pos(e);eraseHit=eraseMode?wireAt(e):null;draw()});
 canvas.addEventListener('mouseleave',()=>{hover=null;mousePoint=null;eraseHit=null;draw()});
 canvas.addEventListener('contextmenu',e=>{e.preventDefault();if(eraseSegment(wireAt(e)))return});
 canvas.addEventListener('click',e=>{let p=pos(e);
 if(eraseMode){eraseSegment(wireAt(e));return}
-if(wireMode&&!hitComponent(e)){if(!wirePath.length)wirePath=[p];else if(nodeKey(wirePath.at(-1))!==nodeKey(p))wirePath.push(p);draw();run();return}
+let h=hitComponent(e);
+if(h&&h.terminal){wireMode=true;clearSelection();eraseMode=false;syncTools();p={x:h.terminal.x,y:h.terminal.y};if(!wirePath.length)wirePath=[p];else{if(nodeKey(wirePath.at(-1))!==nodeKey(p))wirePath.push(p);if(wirePath.length>1)wires.push(wirePath.slice());wirePath=[]}draw();run();return}
+if(wireMode&&!h){if(!wirePath.length)wirePath=[p];else if(nodeKey(wirePath.at(-1))!==nodeKey(p))wirePath.push(p);draw();run();return}
 if(selected){/* clic pour poser */let c=placeComponent(selected,p);status(`${TYPES[c.type].name} posé · clic dessus pour le tourner`);say('Composant posé. Clique-le pour le tourner, puis relie les bornes avec le mode Fil.');clearSelection();wireMode=true;syncTools();pendingRot=0;draw();run();return}
-let h=hitComponent(e);if(h){let c=h.c;
+if(h){let c=h.c;
 if(c.type==='switch'){/* clic au centre : bascule ; ailleurs : rotation */let mx=h.ox+(c.a.x+c.b.x)/2*h.g,my=h.oy+(c.a.y+c.b.y)/2*h.g;if(Math.hypot(h.px-mx,h.py-my)<=12){c.closed=!c.closed;run();draw();return}}
 let nr=(c.rot+1)%4;if(!fits(c.cx,c.cy,nr)){say('Rotation impossible ici : le composant sortirait de la grille.','bad');return}c.rot=nr;setGeom(c);status(`${TYPES[c.type].name} tourné de ${c.rot*90}°`);wireMode=true;syncTools();run();draw()}});
 canvas.addEventListener('dblclick',e=>{e.preventDefault();if(wireMode)finishWire()});
