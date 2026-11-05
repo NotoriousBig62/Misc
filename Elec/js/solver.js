@@ -1,4 +1,4 @@
-(function(){'use strict';const S=window.S;
+(function(){'use strict';const S=window.Sim;
 function gaussian(A,b){const n=b.length;for(let k=0;k<n;k++){let p=k;for(let i=k+1;i<n;i++)if(Math.abs(A[i][k])>Math.abs(A[p][k]))p=i;if(Math.abs(A[p][k])<1e-14)continue;[A[k],A[p]]=[A[p],A[k]];[b[k],b[p]]=[b[p],b[k]];let v=A[k][k];for(let j=k;j<n;j++)A[k][j]/=v;b[k]/=v;for(let i=0;i<n;i++)if(i!==k){v=A[i][k];if(!v)continue;for(let j=k;j<n;j++)A[i][j]-=v*A[k][j];b[i]-=v*b[k]}}return b}
 S.solve=function(){S.parts.forEach(c=>{c.current=0;c.lit=0});const bats=S.parts.filter(c=>c.kind==='battery');if(!bats.length)return {voltage:0,current:0};
 // Conductive wires merge into electrical nodes; crossings at grid intersections connect.
