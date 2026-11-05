@@ -1,0 +1,1 @@
+(function(){'use strict';document.querySelector('#hint').textContent='Choisis un composant, clique sur la grille pour le placer. Relie les bornes en cliquant les points.';})();
