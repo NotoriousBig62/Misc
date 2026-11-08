@@ -2,8 +2,8 @@
 function fit(){const r=canvas.parentElement.getBoundingClientRect(),d=devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}
 function geo(){const w=canvas.clientWidth,h=canvas.clientHeight,g=Math.max(20,Math.min(58,(w-70)/S.W,(h-70)/S.H)),ox=(w-S.W*g)/2,oy=(h-S.H*g)/2;return{w,h,g,ox,oy}}
 function pos(e){const r=canvas.getBoundingClientRect(),{g,ox,oy}=geo(),x=(e.clientX-r.left-ox)/g,y=(e.clientY-r.top-oy)/g;if(x<0||x>S.W||y<0||y>S.H)return null;return S.snap({x,y})}
-// Halo luminance tracks branch current: 9 V / 24 Ω for the lamp, 20 mA for the LED.
-function glowIntensity(c){if(c.kind!=='lamp'&&c.kind!=='led')return 0;const nominal=c.kind==='led'?.020:(9/24),ratio=Math.max(0,c.current||0)/nominal;if(ratio<=1)return ratio;return Math.min(1.5,1+.5*(1-Math.exp(-2*(ratio-1))))}
+// Halo luminance tracks branch current: 150 mA for the lamp, 20 mA for the LED.
+function glowIntensity(c){if(c.kind!=='lamp'&&c.kind!=='led')return 0;const nominal=c.kind==='led'?.020:.15,ratio=Math.max(0,c.current||0)/nominal;if(ratio<=1)return ratio;return Math.min(1.5,1+.5*(1-Math.exp(-2*(ratio-1))))}
 function nearTerminal(p){let best=null,d=.34;for(const c of S.parts)for(let i=0;i<2;i++){const t=S.term(c,i),n=Math.hypot(t.x-p.x,t.y-p.y);if(n<d){best={c,i,p:t};d=n}}return best}
 function hitComp(p){for(let i=S.parts.length-1;i>=0;i--){const c=S.parts[i];if(Math.hypot(c.x-p.x,c.y-p.y)<.48)return c}return null}
 function wireHit(p){for(let wi=S.wires.length-1;wi>=0;wi--){const a=S.wires[wi];for(let i=1;i<a.length;i++){const u=a[i-1],v=a[i],dx=v.x-u.x,dy=v.y-u.y,t=Math.max(0,Math.min(1,((p.x-u.x)*dx+(p.y-u.y)*dy)/(dx*dx+dy*dy||1))),d=Math.hypot(p.x-u.x-t*dx,p.y-u.y-t*dy);if(d<.18)return{wi,i}}}return null}
