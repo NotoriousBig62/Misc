@@ -4,3 +4,6 @@
 
 /* Electrical current, component readings and erase affordance */
 .canvas-wrap{position:relative}.component-tooltip{position:absolute;z-index:3;pointer-events:none;max-width:290px;padding:8px 11px;border:1px solid var(--mint);border-radius:7px;background:#10191bf2;color:var(--ink);box-shadow:0 5px 20px #0008;font-size:12px;line-height:1.45}.component-tooltip[hidden]{display:none}#board{cursor:crosshair}#board.erase-mode{cursor:not-allowed}#wireBtn.on,#eraseBtn.on{box-shadow:0 0 0 2px var(--mint) inset}.canvas-wrap:has(#board.erase-mode){cursor:not-allowed}
+
+/* Tooltips must never intercept canvas interaction. */
+.component-tooltip{pointer-events:none}
