@@ -1,5 +1,19 @@
 (function(){'use strict';const S=window.Sim;
 function gaussian(A,b){const n=b.length;for(let k=0;k<n;k++){let p=k;for(let i=k+1;i<n;i++)if(Math.abs(A[i][k])>Math.abs(A[p][k]))p=i;if(Math.abs(A[p][k])<1e-14)continue;[A[k],A[p]]=[A[p],A[k]];[b[k],b[p]]=[b[p],b[k]];let v=A[k][k];for(let j=k;j<n;j++)A[k][j]/=v;b[k]/=v;for(let i=0;i<n;i++)if(i!==k){v=A[i][k];if(!v)continue;for(let j=k;j<n;j++)A[i][j]-=v*A[k][j];b[i]-=v*b[k]}}return b}
+// Return signed conventional current for each unit section of each drawn wire.
+// Positive means current follows the wire's stored point order. Ideal-wire loops
+// have no unique branch-current solution; a deterministic spanning forest supplies
+// one KCL-consistent solution without consulting node potentials.
+S.calculateWireCurrents=function(parts=S.parts,wires=S.wires){
+ const key=p=>p.x+','+p.y, edges=[], adjacency=new Map(), injections=new Map();
+ const add=(a,b,wire,segment)=>{const e={a:key(a),b:key(b),wire,segment,from:{x:a.x,y:a.y},to:{x:b.x,y:b.y},current:0};const id=edges.length;edges.push(e);for(const k of [e.a,e.b]){if(!adjacency.has(k))adjacency.set(k,[]);adjacency.get(k).push(id)}};
+ wires.forEach((path,wi)=>{for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],dx=Math.sign(b.x-a.x),dy=Math.sign(b.y-a.y),n=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));if(!n)continue;if(dx&&dy){add(a,b,wi,i-1);continue}let prev=a;for(let j=1;j<=n;j++){const next={x:a.x+dx*j,y:a.y+dy*j};add(prev,next,wi,i-1);prev=next}}});
+ const signedCurrent=c=>{if(!Number.isFinite(c.current)||!c.current)return 0;if(c.kind==='battery')return -Math.abs(c.current);if(c.kind==='led')return Math.sign(c.voltageDrop||0)*Math.abs(c.current);const r=S.spec[c.kind]?.r;return Number.isFinite(r)&&r>0?(c.voltageDrop||0)/r:0};
+ const inject=(p,value)=>{const k=key(p);injections.set(k,(injections.get(k)||0)+value)};
+ for(const c of parts){const i=signedCurrent(c),t0=S.term(c,0),t1=S.term(c,1);inject(t0,i);inject(t1,-i)}
+ const seen=new Set();for(const start of adjacency.keys()){if(seen.has(start))continue;const parent=new Map([[start,null]]),parentEdge=new Map(),order=[start];seen.add(start);for(let q=0;q<order.length;q++){const v=order[q];for(const id of adjacency.get(v)||[]){const e=edges[id],u=e.a===v?e.b:e.a;if(seen.has(u))continue;seen.add(u);parent.set(u,v);parentEdge.set(u,id);order.push(u)}}const subtotal=new Map();for(let i=order.length-1;i>0;i--){const v=order[i],p=parent.get(v),id=parentEdge.get(v),e=edges[id],sum=(subtotal.get(v)||0)+(injections.get(v)||0);e.current=e.a===v?sum:-sum;subtotal.set(p,(subtotal.get(p)||0)+sum)}}
+ return wires.map((path,wi)=>edges.filter(e=>e.wire===wi).map(e=>({from:e.from,to:e.to,current:e.current})));
+};
 S.solve=function(){S.parts.forEach(c=>{c.current=0;c.lit=0;if(c.kind==='led')c.burnt=false});const bats=S.parts.filter(c=>c.kind==='battery');if(!bats.length)return {voltage:0,current:0};
 // Conductive wires merge into electrical nodes; crossings at grid intersections connect.
 const parent=new Map(),key=p=>p.x+','+p.y,find=x=>{if(!parent.has(x))parent.set(x,x);if(parent.get(x)!==x)parent.set(x,find(parent.get(x)));return parent.get(x)},join=(a,b)=>{a=find(a);b=find(b);if(a!==b)parent.set(a,b)};
