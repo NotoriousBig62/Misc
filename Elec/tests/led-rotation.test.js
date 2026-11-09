@@ -34,7 +34,7 @@ function makeCircuit(rotation) {
   };
   const document = {
     querySelector: (selector) => selector === '#board' ? canvas : element(selector),
-    querySelectorAll: () => []
+    querySelectorAll: () => [], createElement: () => ({ style: {}, classList: { add() {}, remove() {}, toggle() {} }, addEventListener() {}, appendChild() {}, remove() {} })
   };
   const window = { addEventListener() {}, dispatchEvent() {} };
   const sandbox = { window, document, devicePixelRatio: 1, Event: function Event() {} };

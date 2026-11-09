@@ -9,8 +9,8 @@ function setup() {
   const ctx = { setTransform(){}, save(){}, restore(){}, setLineDash(){}, clearRect(){}, strokeRect(){}, beginPath(){}, closePath(){}, moveTo(){}, lineTo(){}, stroke(){}, fill(){}, translate(){}, rotate(){}, fillText(t){drawnText.push(t)}, arc(x,y,r){arcs.push({x,y,r})}, createRadialGradient(){return {addColorStop(){}}} };
   const canvas={clientWidth:850,clientHeight:700,parentElement:{getBoundingClientRect:()=>({width:850,height:700})},getContext:()=>ctx,getBoundingClientRect:()=>({left:0,top:0}),addEventListener:(n,f)=>handlers[n]=f,setPointerCapture(){}};
   const els=new Map(); const element=s=>{if(!els.has(s))els.set(s,{textContent:'',className:'',addEventListener(){},classList:{toggle(){},remove(){}}});return els.get(s)};
-  const document={querySelector:s=>s==='#board'?canvas:element(s),querySelectorAll:()=>[]}; const window={addEventListener(){},dispatchEvent(){}};
-  const sandbox={window,document,devicePixelRatio:1,Event:function(){}}; const load=file=>vm.runInNewContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox,{filename:file});
+  const document={querySelector:s=>s==='#board'?canvas:element(s),querySelectorAll:()=>[],createElement:()=>({style:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},appendChild(){},remove(){}})}; const window={addEventListener(){},dispatchEvent(){}};
+  const sandbox={window,document,devicePixelRatio:1,performance:{now:()=>1000},requestAnimationFrame:()=>{},Event:function(){}}; const load=file=>vm.runInNewContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox,{filename:file});
   load('js/core.js');load('js/solver.js');const S=window.Sim;S.W=20;S.H=12;load('js/ui.js');
   // UI geometry: 39px grid with (35,116) offset.
   const click=(x,y,button=0)=>handlers.pointerdown({clientX:35+x*39,clientY:116+y*39,button,pointerId:1,preventDefault(){}});
