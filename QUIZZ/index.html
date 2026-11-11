@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quizz des explorateurs</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Trebuchet MS',Arial,sans-serif;background:linear-gradient(135deg,#6dd5ed,#b993f5);min-height:100vh;color:#2b2b4b}
+.wrap{max-width:820px;margin:0 auto;padding:20px}
+h1{text-align:center;font-size:2.4em;color:#fff;text-shadow:2px 2px 0 #5b3fa0;margin:10px 0}
+.sub{text-align:center;color:#fff;margin-bottom:20px}
+.card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 8px 20px rgba(0,0,0,.2);margin-bottom:18px}
+h2{margin-top:0;color:#5b3fa0}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.theme{border:3px solid #ddd;border-radius:14px;padding:12px;text-align:center;cursor:pointer;font-weight:bold;user-select:none;background:#fafafa;transition:.15s}
+.theme .ic{font-size:2em;display:block}
+.theme.on{border-color:#5b3fa0;background:#efe6ff;transform:scale(1.04)}
+.theme small{display:block;font-weight:normal;color:#777}
+.row{display:flex;flex-wrap:wrap;gap:20px}
+label{font-weight:bold;display:block;margin-bottom:6px}
+select,input[type=range]{width:100%;padding:8px;font-size:1em;border-radius:10px;border:2px solid #ccc}
+.small{font-size:.85em;color:#666}
+button{font-size:1.1em;font-weight:bold;border:none;border-radius:14px;padding:12px 22px;cursor:pointer;background:#5b3fa0;color:#fff}
+button:hover{background:#7450c8}
+button.alt{background:#eee;color:#333}
+button:disabled{opacity:.5;cursor:not-allowed}
+.center{text-align:center}
+.bar{height:12px;background:#eee;border-radius:8px;overflow:hidden;margin-bottom:14px}
+.bar div{height:100%;background:#4cc38a;width:0;transition:.3s}
+.q{font-size:1.35em;margin:10px 0 16px}
+.tag{display:inline-block;background:#efe6ff;color:#5b3fa0;border-radius:10px;padding:3px 10px;font-size:.85em;font-weight:bold}
+.ans{display:block;width:100%;text-align:left;margin:8px 0;background:#f4f4fb;color:#2b2b4b;border:3px solid #ddd}
+.ans:hover{background:#e6e6f7}
+.ans.ok{background:#c8f3da;border-color:#2e9e62}
+.ans.ko{background:#ffd3d3;border-color:#d24a4a}
+.fb{min-height:24px;margin:10px 0;font-weight:bold}
+.score{font-size:3em;text-align:center;color:#5b3fa0}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🧠 Quizz des explorateurs</h1>
+<p class="sub">Crée ton quizz sur mesure : choisis tes thèmes et c'est parti !</p>
+
+<div id="home">
+<div class="card">
+<h2>1. Choisis tes thèmes</h2>
+<div class="themes" id="themes"></div>
+<p class="center"><button class="alt" id="all">Tout sélectionner</button> <button class="alt" id="none">Tout effacer</button></p>
+</div>
+<div class="card">
+<h2>2. Règle ton quizz</h2>
+<div class="row">
+<div style="flex:1;min-width:220px"><label>Nombre de questions : <span id="nbv">10</span></label><input type="range" id="nb" min="5" max="30" step="1" value="10"></div>
+<div style="flex:1;min-width:220px"><label>Difficulté</label><select id="diff"><option value="0">Toutes</option><option value="1">Facile</option><option value="2">Moyen</option><option value="3">Difficile</option></select></div>
+</div>
+<p class="small" id="avail"></p>
+<p class="center"><button id="start">🚀 Lancer le quizz</button></p>
+</div>
+</div>
+
+<div id="game" class="card hidden">
+<div class="bar"><div id="prog"></div></div>
+<span class="tag" id="qtheme"></span> <span class="small" id="qnum"></span>
+<div class="q" id="qtext"></div>
+<div id="answers"></div>
+<div class="fb" id="fb"></div>
+<p class="center"><button id="next" class="hidden">Suivant ➜</button></p>
+</div>
+
+<div id="end" class="card hidden center">
+<h2>Quizz terminé !</h2>
+<div class="score" id="score"></div>
+<p id="msg"></p>
+<button id="replay">🔁 Rejouer avec les mêmes réglages</button>
+<button class="alt" id="home2">🏠 Retour à l'accueil</button>
+</div>
+</div>
+
+<script src="questions.js"></script>
+<script>
+const THEMES={nature:['🌿','Nature'],geographie:['🌍','Géographie'],histoire:['🏰','Histoire'],animaux:['🦁','Animaux'],sciences:['🔬','Sciences'],espace:['🚀','Espace'],corps:['🫀','Corps humain'],sport:['⚽','Sport'],arts:['🎨','Arts & Musique'],culture:['💡','Culture générale']};
+const sel=new Set(Object.keys(THEMES));
+const $=id=>document.getElementById(id);
+let quiz=[],idx=0,pts=0;
+function count(){const d=+$('diff').value;const n=QUESTIONS.filter(q=>sel.has(q.t)&&(!d||q.d===d)).length;$('avail').textContent=n+' questions disponibles avec ces réglages.';$('start').disabled=n===0;return n}
+function build(){const box=$('themes');box.innerHTML='';for(const k in THEMES){const n=QUESTIONS.filter(q=>q.t===k).length;const e=document.createElement('div');e.className='theme'+(sel.has(k)?' on':'');e.innerHTML='<span class="ic">'+THEMES[k][0]+'</span>'+THEMES[k][1]+'<small>'+n+' questions</small>';e.onclick=()=>{sel.has(k)?sel.delete(k):sel.add(k);e.classList.toggle('on');count()};box.appendChild(e)}count()}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){const d=+$('diff').value;let pool=shuffle(QUESTIONS.filter(q=>sel.has(q.t)&&(!d||q.d===d)));quiz=pool.slice(0,+$('nb').value);idx=0;pts=0;$('home').classList.add('hidden');$('end').classList.add('hidden');$('game').classList.remove('hidden');show()}
+function show(){const q=quiz[idx];$('prog').style.width=(idx/quiz.length*100)+'%';$('qtheme').textContent=THEMES[q.t][0]+' '+THEMES[q.t][1];$('qnum').textContent='Question '+(idx+1)+' / '+quiz.length;$('qtext').textContent=q.q;$('fb').textContent='';$('next').classList.add('hidden');const box=$('answers');box.innerHTML='';const order=shuffle(q.r.map((t,i)=>({t,i})));order.forEach(o=>{const b=document.createElement('button');b.className='ans';b.textContent=o.t;b.onclick=()=>answer(b,o.i===q.a);b.dataset.ok=o.i===q.a?'1':'0';box.appendChild(b)})}
+function answer(btn,ok){document.querySelectorAll('.ans').forEach(b=>{b.disabled=true;if(b.dataset.ok==='1')b.classList.add('ok')});if(ok){pts++;$('fb').textContent='✅ Bravo !'}else{btn.classList.add('ko');$('fb').textContent='❌ Raté ! La bonne réponse est en vert.'}$('next').textContent=idx===quiz.length-1?'Voir mon score':'Suivant ➜';$('next').classList.remove('hidden')}
+function next(){idx++;if(idx>=quiz.length)finish();else show()}
+function finish(){$('game').classList.add('hidden');$('end').classList.remove('hidden');$('score').textContent=pts+' / '+quiz.length;const r=pts/quiz.length;$('msg').textContent=r===1?'Parfait, tu es un champion ! 🏆':r>=.7?'Excellent travail ! 🎉':r>=.4?'Pas mal, continue comme ça ! 💪':'Courage, retente ta chance ! 🌟'}
+$('nb').oninput=e=>$('nbv').textContent=e.target.value;
+$('diff').onchange=count;
+$('all').onclick=()=>{Object.keys(THEMES).forEach(k=>sel.add(k));build()};
+$('none').onclick=()=>{sel.clear();build()};
+$('start').onclick=start;$('next').onclick=next;$('replay').onclick=start;
+$('home2').onclick=()=>{$('end').classList.add('hidden');$('game').classList.add('hidden');$('home').classList.remove('hidden')};
+build();
+</script>
+</body>
+</html>
