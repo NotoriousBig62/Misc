@@ -1,1 +1,1514 @@
-PASTE
+[
+  {
+    "id": 221,
+    "theme": "Nature",
+    "age": 16,
+    "difficulte": "facile",
+    "question": "Quel phénomène permet à certaines graines d’être dispersées par le vent grâce à leurs aigrettes ?",
+    "reponses": [
+      "L’anémochorie",
+      "La pollinisation",
+      "La germination",
+      "La photosynthèse"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 222,
+    "theme": "Nature",
+    "age": 22,
+    "difficulte": "facile",
+    "question": "Quel nom donne-t-on à la couche de sol riche en matière organique issue de la décomposition ?",
+    "reponses": [
+      "Le limon",
+      "L’humus",
+      "Le gravier",
+      "Le sous-sol"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 223,
+    "theme": "Nature",
+    "age": 25,
+    "difficulte": "facile",
+    "question": "Quelle partie d’un arbre transporte principalement la sève brute des racines vers les feuilles ?",
+    "reponses": [
+      "Le phloème",
+      "Le cambium",
+      "Le xylème",
+      "L’écorce"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 224,
+    "theme": "Nature",
+    "age": 29,
+    "difficulte": "moyen",
+    "question": "Dans une forêt tempérée, comment appelle-t-on les plantes qui poussent sur un arbre sans en tirer de nourriture ?",
+    "reponses": [
+      "Des parasites obligatoires",
+      "Des saprophytes",
+      "Des plantes carnivores",
+      "Des épiphytes"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 225,
+    "theme": "Nature",
+    "age": 33,
+    "difficulte": "moyen",
+    "question": "Quel type de roche se forme par refroidissement et solidification d’un magma ?",
+    "reponses": [
+      "Une roche magmatique",
+      "Une roche sédimentaire",
+      "Une roche métamorphique",
+      "Une roche évaporitique"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 226,
+    "theme": "Nature",
+    "age": 38,
+    "difficulte": "difficile",
+    "question": "Quel est le nom du biome dominé par des graminées, avec peu d’arbres, en climat tropical ?",
+    "reponses": [
+      "La taïga",
+      "La savane",
+      "La toundra",
+      "La mangrove"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 227,
+    "theme": "Nature",
+    "age": 42,
+    "difficulte": "difficile",
+    "question": "Comment appelle-t-on l’étude des cernes annuels du bois pour dater les arbres et les événements passés ?",
+    "reponses": [
+      "La palynologie",
+      "La pédologie",
+      "La dendrochronologie",
+      "La bryologie"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 228,
+    "theme": "Géographie",
+    "age": 47,
+    "difficulte": "facile",
+    "question": "Quel détroit relie la mer Noire à la mer de Marmara en traversant Istanbul ?",
+    "reponses": [
+      "Les Dardanelles",
+      "Le détroit de Messine",
+      "Le détroit d’Ormuz",
+      "Le Bosphore"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 229,
+    "theme": "Géographie",
+    "age": 52,
+    "difficulte": "facile",
+    "question": "Dans quel pays se trouve la région historique de Transylvanie ?",
+    "reponses": [
+      "La Roumanie",
+      "La Bulgarie",
+      "La Serbie",
+      "La Hongrie"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 230,
+    "theme": "Géographie",
+    "age": 58,
+    "difficulte": "moyen",
+    "question": "Quel pays enclavé est entièrement entouré par l’Afrique du Sud ?",
+    "reponses": [
+      "L’Eswatini",
+      "Le Lesotho",
+      "Le Botswana",
+      "Le Malawi"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 231,
+    "theme": "Géographie",
+    "age": 61,
+    "difficulte": "moyen",
+    "question": "Quel fleuve européen traverse Vienne, Bratislava, Budapest et Belgrade ?",
+    "reponses": [
+      "Le Rhin",
+      "L’Elbe",
+      "Le Danube",
+      "Le Dniepr"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 232,
+    "theme": "Géographie",
+    "age": 19,
+    "difficulte": "difficile",
+    "question": "Quel est le nom du point de la surface terrestre situé directement au-dessus d’un séisme ?",
+    "reponses": [
+      "Le foyer",
+      "La faille",
+      "L’isobathe",
+      "L’épicentre"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 233,
+    "theme": "Géographie",
+    "age": 27,
+    "difficulte": "difficile",
+    "question": "Quel pays possède l’enclave de Cabinda, séparée du reste de son territoire par une bande de la RDC ?",
+    "reponses": [
+      "L’Angola",
+      "Le Gabon",
+      "La Namibie",
+      "Le Mozambique"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 234,
+    "theme": "Géographie",
+    "age": 35,
+    "difficulte": "difficile",
+    "question": "Quelle est la capitale constitutionnelle de la Bolivie, siège de la Cour suprême ?",
+    "reponses": [
+      "La Paz",
+      "Sucre",
+      "Cochabamba",
+      "Santa Cruz de la Sierra"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 235,
+    "theme": "Histoire",
+    "age": 44,
+    "difficulte": "facile",
+    "question": "Quel traité de 1494 partagea les zones d’expansion outre-mer entre l’Espagne et le Portugal ?",
+    "reponses": [
+      "Le traité de Saragosse",
+      "Le traité de Verdun",
+      "Le traité de Tordesillas",
+      "Le traité d’Utrecht"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 236,
+    "theme": "Histoire",
+    "age": 50,
+    "difficulte": "facile",
+    "question": "Quel souverain de l’empire du Mali est célèbre pour son pèlerinage à La Mecque en 1324 ?",
+    "reponses": [
+      "Soundiata Keïta",
+      "Askia Mohammed",
+      "Sonni Ali",
+      "Mansa Moussa"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 237,
+    "theme": "Histoire",
+    "age": 55,
+    "difficulte": "moyen",
+    "question": "Quel événement de 1683 marque l’échec du second siège ottoman de Vienne ?",
+    "reponses": [
+      "La bataille de Kahlenberg",
+      "La bataille de Mohács",
+      "La bataille de Lépante",
+      "La bataille de Varna"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 238,
+    "theme": "Histoire",
+    "age": 24,
+    "difficulte": "moyen",
+    "question": "Quel code juridique fut promulgué sous Hammurabi à Babylone ?",
+    "reponses": [
+      "Le premier alphabet phonétique",
+      "Un recueil de lois gravées sur une stèle",
+      "Un traité de philosophie grecque",
+      "Un calendrier solaire romain"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 239,
+    "theme": "Histoire",
+    "age": 31,
+    "difficulte": "moyen",
+    "question": "Comment s’appelait la route commerciale reliant la Chine à la Méditerranée par l’Asie centrale ?",
+    "reponses": [
+      "La route de l’ambre",
+      "La route de l’encens",
+      "La route de la soie",
+      "La route des épices atlantiques"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 240,
+    "theme": "Histoire",
+    "age": 40,
+    "difficulte": "difficile",
+    "question": "Quel congrès redessina une partie de l’Europe après la chute de Napoléon Ier ?",
+    "reponses": [
+      "Le congrès de Berlin de 1878",
+      "Le congrès de Vérone",
+      "Le congrès de Aix-la-Chapelle de 1818",
+      "Le congrès de Vienne"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 241,
+    "theme": "Histoire",
+    "age": 46,
+    "difficulte": "difficile",
+    "question": "Quelle reine d’Égypte ancienne régna comme pharaon et fit ériger son temple funéraire à Deir el-Bahari ?",
+    "reponses": [
+      "Hatchepsout",
+      "Néfertiti",
+      "Cléopâtre VII",
+      "Sobeknéferou"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 242,
+    "theme": "Animaux",
+    "age": 57,
+    "difficulte": "facile",
+    "question": "Quel groupe de vertébrés comprend les grenouilles et les salamandres ?",
+    "reponses": [
+      "Les reptiles",
+      "Les amphibiens",
+      "Les poissons cartilagineux",
+      "Les mammifères"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 243,
+    "theme": "Animaux",
+    "age": 63,
+    "difficulte": "facile",
+    "question": "Quel organe sensoriel les requins utilisent-ils notamment pour détecter les champs électriques ?",
+    "reponses": [
+      "L’organe de Jacobson",
+      "La ligne de Weber",
+      "Les ampoules de Lorenzini",
+      "Les sacs aériens"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 244,
+    "theme": "Animaux",
+    "age": 18,
+    "difficulte": "moyen",
+    "question": "Comment appelle-t-on le phénomène par lequel un animal ressemble à une autre espèce toxique ou dangereuse ?",
+    "reponses": [
+      "Le mimétisme müllérien",
+      "Le commensalisme",
+      "Le mutualisme",
+      "Le mimétisme batésien"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 245,
+    "theme": "Animaux",
+    "age": 21,
+    "difficulte": "moyen",
+    "question": "Quel ordre de mammifères comprend les lémuriens, les tarsiers et les singes ?",
+    "reponses": [
+      "Les primates",
+      "Les rongeurs",
+      "Les cétacés",
+      "Les marsupiaux"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 246,
+    "theme": "Animaux",
+    "age": 36,
+    "difficulte": "moyen",
+    "question": "Quel est le seul groupe de mammifères actuels qui pond des œufs ?",
+    "reponses": [
+      "Les marsupiaux",
+      "Les monotrèmes",
+      "Les xénarthres",
+      "Les proboscidiens"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 247,
+    "theme": "Animaux",
+    "age": 49,
+    "difficulte": "difficile",
+    "question": "Comment s’appelle la migration annuelle des papillons monarques d’Amérique du Nord vers le Mexique ?",
+    "reponses": [
+      "Une migration circumpolaire",
+      "Une estivation collective",
+      "Une migration multigénérationnelle",
+      "Une migration verticale quotidienne"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 248,
+    "theme": "Animaux",
+    "age": 54,
+    "difficulte": "difficile",
+    "question": "Quelle structure permet aux araignées de produire la soie ?",
+    "reponses": [
+      "Les chélicères",
+      "Les pédipalpes",
+      "Les stigmates",
+      "Les filières"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 249,
+    "theme": "Sciences",
+    "age": 60,
+    "difficulte": "facile",
+    "question": "Quel nombre représente le préfixe SI « micro- » ?",
+    "reponses": [
+      "10⁻⁶",
+      "10⁻³",
+      "10⁻⁹",
+      "10⁻¹²"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 250,
+    "theme": "Sciences",
+    "age": 15,
+    "difficulte": "facile",
+    "question": "Quel gaz noble est le plus abondant dans l’atmosphère terrestre ?",
+    "reponses": [
+      "Le néon",
+      "L’argon",
+      "L’hélium",
+      "Le krypton"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 251,
+    "theme": "Sciences",
+    "age": 16,
+    "difficulte": "moyen",
+    "question": "Quel est le nom de la liaison qui unit les deux atomes d’oxygène dans une molécule O₂ ?",
+    "reponses": [
+      "Une liaison ionique",
+      "Une liaison métallique",
+      "Une liaison covalente double",
+      "Une liaison covalente simple"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 252,
+    "theme": "Sciences",
+    "age": 22,
+    "difficulte": "moyen",
+    "question": "Quel principe affirme qu’un corps plongé dans un fluide subit une poussée égale au poids du fluide déplacé ?",
+    "reponses": [
+      "Le principe de Pascal",
+      "La loi de Boyle-Mariotte",
+      "Le principe de Bernoulli",
+      "Le principe d’Archimède"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 253,
+    "theme": "Sciences",
+    "age": 25,
+    "difficulte": "moyen",
+    "question": "Quelle particule subatomique porte une charge électrique négative ?",
+    "reponses": [
+      "L’électron",
+      "Le proton",
+      "Le neutron",
+      "Le positron"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 254,
+    "theme": "Sciences",
+    "age": 29,
+    "difficulte": "difficile",
+    "question": "Quel phénomène explique la déviation apparente d’un objet lorsqu’il passe de l’air à l’eau ?",
+    "reponses": [
+      "La diffraction",
+      "La réfraction",
+      "La réflexion totale",
+      "La polarisation"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 255,
+    "theme": "Sciences",
+    "age": 33,
+    "difficulte": "difficile",
+    "question": "Quel savant a formulé les trois lois du mouvement planétaire au début du XVIIe siècle ?",
+    "reponses": [
+      "Tycho Brahe",
+      "Nicolas Copernic",
+      "Johannes Kepler",
+      "Galilée"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 256,
+    "theme": "Espace",
+    "age": 38,
+    "difficulte": "facile",
+    "question": "Quel type d’objet céleste est une étoile à neutrons ?",
+    "reponses": [
+      "Une planète géante riche en neutrons",
+      "Le noyau solide d’une comète",
+      "Une naine brune en fin de vie",
+      "Le résidu extrêmement dense d’une étoile massive après une supernova"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 257,
+    "theme": "Espace",
+    "age": 42,
+    "difficulte": "facile",
+    "question": "Quelle lune de Saturne possède des lacs et des mers d’hydrocarbures liquides à sa surface ?",
+    "reponses": [
+      "Titan",
+      "Encelade",
+      "Mimas",
+      "Rhéa"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 258,
+    "theme": "Espace",
+    "age": 47,
+    "difficulte": "moyen",
+    "question": "Quel point de Lagrange se trouve à environ 1,5 million de kilomètres de la Terre, dans la direction opposée au Soleil ?",
+    "reponses": [
+      "L₁",
+      "L₂",
+      "L₃",
+      "L₄"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 259,
+    "theme": "Espace",
+    "age": 52,
+    "difficulte": "moyen",
+    "question": "Comment appelle-t-on la limite autour d’un trou noir au-delà de laquelle rien ne peut s’échapper ?",
+    "reponses": [
+      "La sphère de Hill",
+      "La photosphère",
+      "L’horizon des événements",
+      "Le point de Roche"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 260,
+    "theme": "Espace",
+    "age": 58,
+    "difficulte": "moyen",
+    "question": "Quel est le principal gaz de l’atmosphère de Vénus ?",
+    "reponses": [
+      "L’azote",
+      "Le dioxyde de soufre",
+      "L’oxygène",
+      "Le dioxyde de carbone"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 262,
+    "theme": "Espace",
+    "age": 19,
+    "difficulte": "difficile",
+    "question": "Quel nom désigne la région située au-delà de Neptune, peuplée de petits corps glacés ?",
+    "reponses": [
+      "La ceinture principale d’astéroïdes",
+      "La ceinture de Kuiper",
+      "Le nuage de Hills",
+      "La ceinture de Van Allen"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 263,
+    "theme": "Corps humain",
+    "age": 27,
+    "difficulte": "facile",
+    "question": "Quelle hormone, sécrétée notamment par la glande pinéale, contribue à réguler le rythme veille-sommeil ?",
+    "reponses": [
+      "La thyroxine",
+      "L’adrénaline",
+      "La mélatonine",
+      "La prolactine"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 264,
+    "theme": "Corps humain",
+    "age": 35,
+    "difficulte": "facile",
+    "question": "Quel type de globules blancs produit les anticorps ?",
+    "reponses": [
+      "Les neutrophiles",
+      "Les plaquettes",
+      "Les érythrocytes",
+      "Les lymphocytes B"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 265,
+    "theme": "Corps humain",
+    "age": 44,
+    "difficulte": "moyen",
+    "question": "Quelle valve se trouve entre l’oreillette gauche et le ventricule gauche ?",
+    "reponses": [
+      "La valve mitrale",
+      "La valve tricuspide",
+      "La valve pulmonaire",
+      "La valve aortique"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 266,
+    "theme": "Corps humain",
+    "age": 50,
+    "difficulte": "moyen",
+    "question": "Quel minéral est au cœur de la molécule d’hémoglobine et permet la fixation de l’oxygène ?",
+    "reponses": [
+      "Le calcium",
+      "Le fer",
+      "Le magnésium",
+      "Le zinc"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 267,
+    "theme": "Corps humain",
+    "age": 55,
+    "difficulte": "moyen",
+    "question": "Quelle partie du système nerveux autonome est généralement associée à la réponse « repos et digestion » ?",
+    "reponses": [
+      "Le système sympathique",
+      "Le système somatique",
+      "Le système parasympathique",
+      "Le système entérique seul"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 268,
+    "theme": "Corps humain",
+    "age": 24,
+    "difficulte": "difficile",
+    "question": "Comment s’appelle la membrane qui enveloppe les poumons ?",
+    "reponses": [
+      "Le péritoine",
+      "Le péricarde",
+      "La dure-mère",
+      "La plèvre"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 269,
+    "theme": "Corps humain",
+    "age": 31,
+    "difficulte": "difficile",
+    "question": "Quel est le nom de la zone du cerveau principalement associée à la coordination des mouvements et à l’équilibre ?",
+    "reponses": [
+      "Le cervelet",
+      "L’hippocampe",
+      "L’amygdale",
+      "Le thalamus"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 270,
+    "theme": "Sport",
+    "age": 40,
+    "difficulte": "facile",
+    "question": "Au tennis, quel terme désigne un score de zéro dans un jeu ?",
+    "reponses": [
+      "Let",
+      "Love",
+      "Deuce",
+      "Advantage"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 271,
+    "theme": "Sport",
+    "age": 46,
+    "difficulte": "facile",
+    "question": "Quelle est la longueur officielle d’un marathon ?",
+    "reponses": [
+      "40 km",
+      "42 km",
+      "42,195 km",
+      "42,5 km"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 272,
+    "theme": "Sport",
+    "age": 57,
+    "difficulte": "moyen",
+    "question": "Dans quelle discipline olympique utilise-t-on un fleuret, une épée ou un sabre ?",
+    "reponses": [
+      "Le pentathlon moderne uniquement",
+      "Le tir à l’arc",
+      "Le biathlon",
+      "L’escrime"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 273,
+    "theme": "Sport",
+    "age": 63,
+    "difficulte": "moyen",
+    "question": "Combien de joueurs d’une équipe de handball sont présents sur le terrain, gardien compris ?",
+    "reponses": [
+      "Sept",
+      "Six",
+      "Huit",
+      "Cinq"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 274,
+    "theme": "Sport",
+    "age": 18,
+    "difficulte": "moyen",
+    "question": "En cyclisme sur route, quelle couleur de maillot distingue le leader du classement général du Tour de France ?",
+    "reponses": [
+      "Vert",
+      "Jaune",
+      "À pois",
+      "Blanc"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 276,
+    "theme": "Sport",
+    "age": 36,
+    "difficulte": "difficile",
+    "question": "Au baseball, combien de retraits une équipe en défense doit-elle obtenir pour terminer une demi-manche ?",
+    "reponses": [
+      "Deux",
+      "Quatre",
+      "Six",
+      "Trois"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 277,
+    "theme": "Arts et littérature",
+    "age": 49,
+    "difficulte": "facile",
+    "question": "Quel écrivain a créé le détective Hercule Poirot ?",
+    "reponses": [
+      "Agatha Christie",
+      "Dorothy L. Sayers",
+      "Arthur Conan Doyle",
+      "Patricia Highsmith"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 278,
+    "theme": "Arts et littérature",
+    "age": 54,
+    "difficulte": "facile",
+    "question": "Quel peintre est associé à la série des « Nymphéas » exposée notamment à l’Orangerie ?",
+    "reponses": [
+      "Edgar Degas",
+      "Claude Monet",
+      "Paul Cézanne",
+      "Auguste Renoir"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 279,
+    "theme": "Arts et littérature",
+    "age": 60,
+    "difficulte": "moyen",
+    "question": "Quel dramaturge espagnol a écrit « La Vie est un songe » ?",
+    "reponses": [
+      "Lope de Vega",
+      "Tirso de Molina",
+      "Pedro Calderón de la Barca",
+      "Federico García Lorca"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 280,
+    "theme": "Arts et littérature",
+    "age": 15,
+    "difficulte": "moyen",
+    "question": "Dans la notation musicale anglo-saxonne, quelle note correspond à la lettre B ?",
+    "reponses": [
+      "La",
+      "Do",
+      "Sol",
+      "Si"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 281,
+    "theme": "Arts et littérature",
+    "age": 16,
+    "difficulte": "moyen",
+    "question": "Quel architecte catalan a conçu la basilique de la Sagrada Família ?",
+    "reponses": [
+      "Antoni Gaudí",
+      "Lluís Domènech i Montaner",
+      "Santiago Calatrava",
+      "Josep Puig i Cadafalch"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 282,
+    "theme": "Arts et littérature",
+    "age": 22,
+    "difficulte": "difficile",
+    "question": "Quel roman de Mary Shelley met en scène le savant Victor Frankenstein ?",
+    "reponses": [
+      "Dracula",
+      "Frankenstein ou le Prométhée moderne",
+      "L’Île du docteur Moreau",
+      "Le Cas étrange du Dr Jekyll et de M. Hyde"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 283,
+    "theme": "Arts et littérature",
+    "age": 25,
+    "difficulte": "difficile",
+    "question": "Quel procédé poétique consiste à répéter une même consonne au début de mots voisins ?",
+    "reponses": [
+      "L’assonance",
+      "L’anaphore",
+      "L’allitération",
+      "La synérèse"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 284,
+    "theme": "Culture générale",
+    "age": 29,
+    "difficulte": "facile",
+    "question": "Quel système d’écriture tactile est constitué de cellules de six points en relief ?",
+    "reponses": [
+      "Le morse",
+      "La sténographie Gregg",
+      "L’alphabet sémaphore",
+      "Le braille"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 285,
+    "theme": "Culture générale",
+    "age": 33,
+    "difficulte": "facile",
+    "question": "Combien de côtés possède un dodécagone ?",
+    "reponses": [
+      "Douze",
+      "Dix",
+      "Onze",
+      "Quatorze"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 286,
+    "theme": "Culture générale",
+    "age": 38,
+    "difficulte": "moyen",
+    "question": "Quel instrument sert à mesurer la pression atmosphérique ?",
+    "reponses": [
+      "Un hygromètre",
+      "Un baromètre",
+      "Un anémomètre",
+      "Un pluviomètre"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 287,
+    "theme": "Culture générale",
+    "age": 42,
+    "difficulte": "moyen",
+    "question": "Quel est le nom du triangle dont les trois côtés ont la même longueur ?",
+    "reponses": [
+      "Isocèle",
+      "Scalène",
+      "Équilatéral",
+      "Rectangle"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 288,
+    "theme": "Culture générale",
+    "age": 47,
+    "difficulte": "difficile",
+    "question": "Quelle unité mesure la fréquence dans le Système international ?",
+    "reponses": [
+      "Le watt",
+      "Le joule",
+      "Le pascal",
+      "Le hertz"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 289,
+    "theme": "Culture générale",
+    "age": 52,
+    "difficulte": "difficile",
+    "question": "Quel alphabet utilise des lettres comme α, β et Ω ?",
+    "reponses": [
+      "L’alphabet grec",
+      "L’alphabet cyrillique",
+      "L’alphabet hébreu",
+      "L’alphabet arménien"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 290,
+    "theme": "Cinéma et musique",
+    "age": 58,
+    "difficulte": "facile",
+    "question": "Quel réalisateur a signé le film japonais « Les Sept Samouraïs » ?",
+    "reponses": [
+      "Yasujirō Ozu",
+      "Akira Kurosawa",
+      "Kenji Mizoguchi",
+      "Hayao Miyazaki"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 291,
+    "theme": "Cinéma et musique",
+    "age": 61,
+    "difficulte": "facile",
+    "question": "Quel instrument à clavier est caractéristique du concerto brandebourgeois no 5 de Bach, avec une longue cadence soliste ?",
+    "reponses": [
+      "L’orgue",
+      "Le piano-forte",
+      "Le clavecin",
+      "Le célesta"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 292,
+    "theme": "Cinéma et musique",
+    "age": 19,
+    "difficulte": "moyen",
+    "question": "Quel film de Federico Fellini a donné son nom à l’adjectif « fellinien » et met en scène Marcello Rubini ?",
+    "reponses": [
+      "Huit et demi",
+      "Amarcord",
+      "La Strada",
+      "La Dolce Vita"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 293,
+    "theme": "Cinéma et musique",
+    "age": 27,
+    "difficulte": "moyen",
+    "question": "Quel compositeur a écrit la musique du ballet « Le Sacre du printemps » ?",
+    "reponses": [
+      "Igor Stravinsky",
+      "Sergei Prokofiev",
+      "Claude Debussy",
+      "Maurice Ravel"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 294,
+    "theme": "Cinéma et musique",
+    "age": 35,
+    "difficulte": "moyen",
+    "question": "Dans le vocabulaire du cinéma, comment appelle-t-on un plan qui montre le point de vue d’un personnage ?",
+    "reponses": [
+      "Un plan d’ensemble",
+      "Un plan subjectif",
+      "Un plan américain",
+      "Un plan de coupe"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 295,
+    "theme": "Cinéma et musique",
+    "age": 44,
+    "difficulte": "difficile",
+    "question": "Quel groupe britannique a sorti l’album « The Dark Side of the Moon » ?",
+    "reponses": [
+      "The Who",
+      "Genesis",
+      "Pink Floyd",
+      "King Crimson"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 296,
+    "theme": "Cinéma et musique",
+    "age": 50,
+    "difficulte": "difficile",
+    "question": "Quel genre musical jamaïcain a précédé le reggae et se caractérise par un tempo rapide et des cuivres ?",
+    "reponses": [
+      "Le mento",
+      "Le dub",
+      "Le calypso",
+      "Le ska"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 297,
+    "theme": "Cuisine et gastronomie",
+    "age": 55,
+    "difficulte": "facile",
+    "question": "Quel ingrédient donne sa texture gélifiée à une panna cotta classique ?",
+    "reponses": [
+      "La gélatine",
+      "La farine de maïs",
+      "Le bicarbonate de soude",
+      "La pectine de pomme"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 298,
+    "theme": "Cuisine et gastronomie",
+    "age": 24,
+    "difficulte": "facile",
+    "question": "De quelle céréale est traditionnellement fabriqué le couscous nord-africain ?",
+    "reponses": [
+      "Le riz",
+      "Le blé dur",
+      "L’orge",
+      "Le maïs"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 299,
+    "theme": "Cuisine et gastronomie",
+    "age": 31,
+    "difficulte": "moyen",
+    "question": "Quelle sauce française classique est préparée à partir de jaunes d’œufs, de beurre clarifié et de réduction vinaigrée ?",
+    "reponses": [
+      "La sauce hollandaise",
+      "La sauce espagnole",
+      "La sauce béarnaise",
+      "La sauce gribiche"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 300,
+    "theme": "Cuisine et gastronomie",
+    "age": 40,
+    "difficulte": "moyen",
+    "question": "Quel fromage italien est traditionnellement utilisé dans le tiramisu ?",
+    "reponses": [
+      "La ricotta",
+      "Le gorgonzola",
+      "Le pecorino",
+      "Le mascarpone"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 301,
+    "theme": "Cuisine et gastronomie",
+    "age": 46,
+    "difficulte": "moyen",
+    "question": "Quel terme culinaire désigne une cuisson lente dans un récipient fermé, avec peu de liquide ?",
+    "reponses": [
+      "Le braisage",
+      "Le pochage",
+      "Le blanchiment",
+      "La friture"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 302,
+    "theme": "Cuisine et gastronomie",
+    "age": 57,
+    "difficulte": "difficile",
+    "question": "Quel cépage blanc est le principal cépage de l’appellation Chablis ?",
+    "reponses": [
+      "Le sauvignon blanc",
+      "Le chardonnay",
+      "Le riesling",
+      "Le chenin blanc"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 303,
+    "theme": "Cuisine et gastronomie",
+    "age": 63,
+    "difficulte": "difficile",
+    "question": "Dans la cuisine japonaise, que désigne le « dashi » ?",
+    "reponses": [
+      "Une pâte fermentée de soja",
+      "Un vinaigre de riz sucré",
+      "Un bouillon de base, souvent préparé avec kombu et bonite séchée",
+      "Une algue grillée pour les sushis"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 304,
+    "theme": "Jeux vidéo",
+    "age": 18,
+    "difficulte": "facile",
+    "question": "Quelle entreprise a créé la série de jeux « The Legend of Zelda » ?",
+    "reponses": [
+      "Sega",
+      "Capcom",
+      "Konami",
+      "Nintendo"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 305,
+    "theme": "Jeux vidéo",
+    "age": 21,
+    "difficulte": "facile",
+    "question": "Dans « Portal », quelle arme permet au joueur de créer des portails reliés entre eux ?",
+    "reponses": [
+      "Le Portal Gun",
+      "Le Gravity Gun",
+      "Le BFG",
+      "Le Grappling Hook"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 306,
+    "theme": "Jeux vidéo",
+    "age": 36,
+    "difficulte": "moyen",
+    "question": "Quel studio a développé le jeu « Stardew Valley » ?",
+    "reponses": [
+      "Supergiant Games",
+      "ConcernedApe",
+      "Mojang",
+      "Klei Entertainment"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 307,
+    "theme": "Jeux vidéo",
+    "age": 49,
+    "difficulte": "moyen",
+    "question": "Dans l’univers de « The Witcher », comment s’appelle le sorceleur protagoniste ?",
+    "reponses": [
+      "Vesemir",
+      "Dandelion",
+      "Geralt de Riv",
+      "Emhyr var Emreis"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 308,
+    "theme": "Jeux vidéo",
+    "age": 54,
+    "difficulte": "moyen",
+    "question": "Quel est le nom du héros de la série « Metroid » ?",
+    "reponses": [
+      "Link",
+      "Fox McCloud",
+      "Kirby",
+      "Samus Aran"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 309,
+    "theme": "Jeux vidéo",
+    "age": 60,
+    "difficulte": "difficile",
+    "question": "Quel jeu de stratégie en temps réel de Blizzard oppose notamment Terrans, Zergs et Protoss ?",
+    "reponses": [
+      "StarCraft",
+      "Warcraft III",
+      "Diablo II",
+      "Command & Conquer"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 310,
+    "theme": "Jeux vidéo",
+    "age": 15,
+    "difficulte": "difficile",
+    "question": "Dans « Tetris », combien de carrés composent chacun des tétriminos classiques ?",
+    "reponses": [
+      "Trois",
+      "Quatre",
+      "Cinq",
+      "Six"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 311,
+    "theme": "Musique",
+    "age": 8,
+    "difficulte": "facile",
+    "question": "En solfège, quelle note est placée sur la deuxième ligne de la portée en clé de sol ?",
+    "reponses": [
+      "Sol",
+      "Mi",
+      "Si",
+      "Ré"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 312,
+    "theme": "Musique",
+    "age": 10,
+    "difficulte": "facile",
+    "question": "Combien de lignes horizontales compte une portée musicale classique ?",
+    "reponses": [
+      "Cinq",
+      "Quatre",
+      "Six",
+      "Sept"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 313,
+    "theme": "Musique",
+    "age": 12,
+    "difficulte": "facile",
+    "question": "Quel signe musical placé au début d’une portée indique notamment la hauteur des notes ?",
+    "reponses": [
+      "La clé",
+      "La nuance",
+      "La barre de mesure",
+      "Le point d’orgue"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 314,
+    "theme": "Musique",
+    "age": 14,
+    "difficulte": "moyen",
+    "question": "Dans une mesure à 3/4, combien de temps de noire sont comptés dans chaque mesure ?",
+    "reponses": [
+      "Trois",
+      "Deux",
+      "Quatre",
+      "Six"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 315,
+    "theme": "Musique",
+    "age": 16,
+    "difficulte": "moyen",
+    "question": "Quel effet a normalement un dièse (♯) sur une note en notation musicale ?",
+    "reponses": [
+      "Il la monte d’un demi-ton",
+      "Il la baisse d’un demi-ton",
+      "Il la monte d’une octave",
+      "Il la rend silencieuse"
+    ],
+    "bonne": 0
+  },
+  {
+    "id": 316,
+    "theme": "Musique",
+    "age": 18,
+    "difficulte": "moyen",
+    "question": "Quel effet a normalement un bémol (♭) sur une note en notation musicale ?",
+    "reponses": [
+      "Il la monte d’un ton",
+      "Il la baisse d’un demi-ton",
+      "Il la baisse d’une octave",
+      "Il la rend plus forte"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 317,
+    "theme": "Musique",
+    "age": 20,
+    "difficulte": "facile",
+    "question": "Combien de cordes possède un violon classique ?",
+    "reponses": [
+      "Trois",
+      "Quatre",
+      "Cinq",
+      "Six"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 318,
+    "theme": "Musique",
+    "age": 22,
+    "difficulte": "facile",
+    "question": "Quel compositeur a écrit le cycle de concertos « Les Quatre Saisons » ?",
+    "reponses": [
+      "Johann Sebastian Bach",
+      "Antonio Vivaldi",
+      "Joseph Haydn",
+      "Frédéric Chopin"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 319,
+    "theme": "Musique",
+    "age": 25,
+    "difficulte": "moyen",
+    "question": "Combien de concertos composent les « Concertos brandebourgeois » de J. S. Bach ?",
+    "reponses": [
+      "Quatre",
+      "Six",
+      "Cinq",
+      "Huit"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 320,
+    "theme": "Musique",
+    "age": 28,
+    "difficulte": "difficile",
+    "question": "En quelle année la Symphonie no 9 de Beethoven a-t-elle été créée à Vienne ?",
+    "reponses": [
+      "1804",
+      "1824",
+      "1812",
+      "1836"
+    ],
+    "bonne": 1
+  },
+  {
+    "id": 321,
+    "theme": "Musique",
+    "age": 32,
+    "difficulte": "moyen",
+    "question": "Quel nom français désigne la durée usuelle d’une note qui vaut quatre noires ?",
+    "reponses": [
+      "Blanche",
+      "Croche",
+      "Ronde",
+      "Double croche"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 322,
+    "theme": "Musique",
+    "age": 35,
+    "difficulte": "moyen",
+    "question": "Quel est le tempo d’un morceau indiqué à 120 BPM ?",
+    "reponses": [
+      "120 notes dans toute la partition",
+      "120 mesures par seconde",
+      "Environ 120 battements par minute",
+      "Deux battements par heure"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 323,
+    "theme": "Musique",
+    "age": 40,
+    "difficulte": "difficile",
+    "question": "Dans la gamme tempérée occidentale courante, en combien de demi-tons égaux l’octave est-elle divisée ?",
+    "reponses": [
+      "10",
+      "11",
+      "12",
+      "14"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 324,
+    "theme": "Musique",
+    "age": 45,
+    "difficulte": "moyen",
+    "question": "Quel instrument à clavier possède généralement 88 touches dans son format acoustique standard ?",
+    "reponses": [
+      "Le clavecin",
+      "L’orgue positif",
+      "Le piano",
+      "Le célesta"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 325,
+    "theme": "Musique",
+    "age": 50,
+    "difficulte": "difficile",
+    "question": "Dans une fugue, comment appelle-t-on généralement le thème principal repris par les différentes voix ?",
+    "reponses": [
+      "La coda",
+      "La cadence",
+      "Le sujet",
+      "Le récitatif"
+    ],
+    "bonne": 2
+  },
+  {
+    "id": 326,
+    "theme": "Musique",
+    "age": 55,
+    "difficulte": "moyen",
+    "question": "Quelle texture caractérise traditionnellement le chant grégorien liturgique ?",
+    "reponses": [
+      "Polyphonique à quatre voix",
+      "Toujours accompagnée d’une batterie",
+      "Uniquement instrumentale",
+      "Monodique, sans accompagnement instrumental noté"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 327,
+    "theme": "Musique",
+    "age": 60,
+    "difficulte": "difficile",
+    "question": "Quel compositeur est l’auteur de l’opéra « La Flûte enchantée », créé en 1791 ?",
+    "reponses": [
+      "Ludwig van Beethoven",
+      "Richard Wagner",
+      "Christoph Willibald Gluck",
+      "Wolfgang Amadeus Mozart"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 328,
+    "theme": "Musique",
+    "age": 65,
+    "difficulte": "moyen",
+    "question": "Quel est le nom de l’intervalle séparant deux notes dont la fréquence est dans un rapport de 2 à 1 ?",
+    "reponses": [
+      "La quinte",
+      "La quarte",
+      "La tierce",
+      "L’octave"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 329,
+    "theme": "Musique",
+    "age": 72,
+    "difficulte": "difficile",
+    "question": "Combien de voix réelles distinctes au minimum un quatuor à cordes réunit-il habituellement ?",
+    "reponses": [
+      "Deux",
+      "Trois",
+      "Cinq",
+      "Quatre"
+    ],
+    "bonne": 3
+  },
+  {
+    "id": 330,
+    "theme": "Musique",
+    "age": 99,
+    "difficulte": "difficile",
+    "question": "Quel terme désigne en musicologie l’étude des instruments de musique et de leur classification ?",
+    "reponses": [
+      "La prosodie",
+      "La paléographie",
+      "La philologie",
+      "L’organologie"
+    ],
+    "bonne": 3
+  }
+]
