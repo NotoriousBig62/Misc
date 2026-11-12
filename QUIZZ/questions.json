@@ -62,7 +62,7 @@
 {"id":61,"theme":"Histoire","age":99,"difficulte":"difficile","question":"Quel général carthaginois a traversé les Alpes avec des éléphants ?","reponses":["Hannibal","Scipion","Spartacus","Attila"],"bonne":0},
 {"id":62,"theme":"Histoire","age":14,"difficulte":"difficile","question":"Dans quelle ville a été érigée la première tour Eiffel (1889) ?","reponses":["Lyon","Paris","Bordeaux","Lille"],"bonne":1},
 {"id":63,"theme":"Histoire","age":14,"difficulte":"difficile","question":"Quel roi a fait construire la cathédrale de la Sainte-Chapelle ?","reponses":["Saint Louis","Philippe Auguste","Henri IV","Louis XI"],"bonne":0},
-{"id":64,"theme":"Animaux","age":7,"difficulte":"facile","question":"Quel est le plus grand animal terrestre ?","reponses":["La girafe","L'éléphant d'Afrique","Le rhinocéros","L'hippopotame"],"bonne":1},
+{"id":64,"theme":"Animaux","age":7,"difficulte":"facile","question":"Quel est le plus lourd animal terrestre ?","reponses":["La girafe","L'éléphant d'Afrique","Le rhinocéros","L'hippopotame"],"bonne":1},
 {"id":65,"theme":"Animaux","age":5,"difficulte":"facile","question":"Combien de pattes a une araignée ?","reponses":["6","8","10","12"],"bonne":1},
 {"id":66,"theme":"Animaux","age":5,"difficulte":"facile","question":"Quel animal est souvent surnommé le roi des animaux ?","reponses":["Le tigre","Le lion","Le léopard","Le guépard"],"bonne":1},
 {"id":67,"theme":"Animaux","age":4,"difficulte":"facile","question":"Quel animal fait « miaou » ?","reponses":["Le chien","Le chat","Le cheval","La vache"],"bonne":1},
