@@ -218,7 +218,7 @@
 {"id":217,"theme":"Corps humain","age":10,"difficulte":"moyen","question":"Quel organe musculaire bat sans s’arrêter toute la vie ?","reponses":["Le biceps","Le cœur","Le mollet","Le diaphragme de la bouche"],"bonne":1},
 {"id":218,"theme":"Sport","age":9,"difficulte":"moyen","question":"Quel sport associe course, saut et lancer ?","reponses":["L'athlétisme","La natation","Le tennis","Le judo"],"bonne":0},
 {"id":219,"theme":"Arts et littérature","age":8,"difficulte":"moyen","question":"Quel instrument à percussion se frappe avec des baguettes ?","reponses":["Le tambour","La harpe","Le violon","L'orgue"],"bonne":0},
-{"id":220,"theme":"Culture générale","age":6,"difficulte":"moyen","question":"Combien de secondes y a-t-il dans une minute ?","reponses":["30","60","100","120"],"bonne":1}
+{"id":220,"theme":"Culture générale","age":6,"difficulte":"moyen","question":"Combien de secondes y a-t-il dans une minute ?","reponses":["30","60","100","120"],"bonne":1},
 {"id": 221,"theme": "Nature","age": 16,"difficulte": "facile","question": "Quel phénomène permet à certaines graines d’être dispersées par le vent grâce à leurs aigrettes ?","reponses": ["L’anémochorie","La pollinisation","La germination","La photosynthèse"],"bonne": 0},
 {"id": 222,"theme": "Nature","age": 22,"difficulte": "facile","question": "Quel nom donne-t-on à la couche de sol riche en matière organique issue de la décomposition ?","reponses": ["Le limon","L’humus","Le gravier","Le sous-sol"],"bonne": 1},
 {"id": 223,"theme": "Nature","age": 25,"difficulte": "facile","question": "Quelle partie d’un arbre transporte principalement la sève brute des racines vers les feuilles ?","reponses": ["Le phloème","Le cambium","Le xylème","L’écorce"],"bonne": 2},
