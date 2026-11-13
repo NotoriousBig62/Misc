@@ -1,0 +1,9 @@
+[
+  {"id":10001,"theme":"Jeux vidéo","age":18,"difficulte":"facile","question":"Quelle entreprise a créé la série de jeux « The Legend of Zelda » ?","reponses":["Sega","Capcom","Konami","Nintendo"],"bonne":3,"generation":true},
+  {"id":10002,"theme":"Jeux vidéo","age":21,"difficulte":"facile","question":"Dans « Portal », quelle arme permet au joueur de créer des portails reliés entre eux ?","reponses":["Le Portal Gun","Le Gravity Gun","Le BFG","Le Grappling Hook"],"bonne":0,"generation":true},
+  {"id":10003,"theme":"Jeux vidéo","age":36,"difficulte":"moyen","question":"Quel studio a développé le jeu « Stardew Valley » ?","reponses":["Supergiant Games","ConcernedApe","Mojang","Klei Entertainment"],"bonne":1,"generation":true},
+  {"id":10004,"theme":"Jeux vidéo","age":49,"difficulte":"moyen","question":"Dans l’univers de « The Witcher », comment s’appelle le sorceleur protagoniste ?","reponses":["Vesemir","Dandelion","Geralt de Riv","Emhyr var Emreis"],"bonne":2,"generation":true},
+  {"id":10005,"theme":"Jeux vidéo","age":54,"difficulte":"moyen","question":"Quel est le nom du héros de la série « Metroid » ?","reponses":["Link","Fox McCloud","Kirby","Samus Aran"],"bonne":3,"generation":true},
+  {"id":10006,"theme":"Jeux vidéo","age":60,"difficulte":"difficile","question":"Quel jeu de stratégie en temps réel de Blizzard oppose notamment Terrans, Zergs et Protoss ?","reponses":["StarCraft","Warcraft III","Diablo II","Command & Conquer"],"bonne":0,"generation":true},
+  {"id":10007,"theme":"Jeux vidéo","age":15,"difficulte":"difficile","question":"Dans « Tetris », combien de carrés composent chacun des tétriminos classiques ?","reponses":["Trois","Quatre","Cinq","Six"],"bonne":1,"generation":true}
+]
