@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 328,
+  "total": 378,
   "themes": [
     {
       "nom": "Animaux",
@@ -70,13 +70,19 @@
     {
       "nom": "Culture générale",
       "slug": "culture-generale",
-      "nombre": 28,
+      "nombre": 78,
       "fichiers": [
         {
           "fichier": "questions/culture-generale/culture-generale-001.json",
           "nombre": 28,
           "ageMin": 4,
           "ageMax": 52
+        },
+        {
+          "fichier": "questions/culture-generale/culture-generale-002.json",
+          "nombre": 50,
+          "ageMin": 4,
+          "ageMax": 55
         }
       ]
     },
