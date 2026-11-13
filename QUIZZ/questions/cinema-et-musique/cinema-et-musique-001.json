@@ -1,0 +1,9 @@
+[
+  {"id":3001,"theme":"Cinéma et musique","age":58,"difficulte":"facile","question":"Quel réalisateur a signé le film japonais « Les Sept Samouraïs » ?","reponses":["Yasujirō Ozu","Akira Kurosawa","Kenji Mizoguchi","Hayao Miyazaki"],"bonne":1,"generation":true},
+  {"id":3002,"theme":"Cinéma et musique","age":61,"difficulte":"facile","question":"Quel instrument à clavier est caractéristique du concerto brandebourgeois no 5 de Bach, avec une longue cadence soliste ?","reponses":["L’orgue","Le piano-forte","Le clavecin","Le célesta"],"bonne":2,"generation":false},
+  {"id":3003,"theme":"Cinéma et musique","age":19,"difficulte":"moyen","question":"Quel film de Federico Fellini a donné son nom à l’adjectif « fellinien » et met en scène Marcello Rubini ?","reponses":["Huit et demi","Amarcord","La Strada","La Dolce Vita"],"bonne":3,"generation":true},
+  {"id":3004,"theme":"Cinéma et musique","age":27,"difficulte":"moyen","question":"Quel compositeur a écrit la musique du ballet « Le Sacre du printemps » ?","reponses":["Igor Stravinsky","Sergei Prokofiev","Claude Debussy","Maurice Ravel"],"bonne":0,"generation":false},
+  {"id":3005,"theme":"Cinéma et musique","age":35,"difficulte":"moyen","question":"Dans le vocabulaire du cinéma, comment appelle-t-on un plan qui montre le point de vue d’un personnage ?","reponses":["Un plan d’ensemble","Un plan subjectif","Un plan américain","Un plan de coupe"],"bonne":1,"generation":false},
+  {"id":3006,"theme":"Cinéma et musique","age":44,"difficulte":"difficile","question":"Quel groupe britannique a sorti l’album « The Dark Side of the Moon » ?","reponses":["The Who","Genesis","Pink Floyd","King Crimson"],"bonne":2,"generation":true},
+  {"id":3007,"theme":"Cinéma et musique","age":50,"difficulte":"difficile","question":"Quel genre musical jamaïcain a précédé le reggae et se caractérise par un tempo rapide et des cuivres ?","reponses":["Le mento","Le dub","Le calypso","Le ska"],"bonne":3,"generation":true}
+]
