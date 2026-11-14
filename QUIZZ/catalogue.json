@@ -1,15 +1,15 @@
 {
   "version": 1,
-  "total": 450,
+  "total": 399,
   "themes": [
     {
       "nom": "Animaux",
       "slug": "animaux",
-      "nombre": 29,
+      "nombre": 50,
       "fichiers": [
         {
           "fichier": "questions/animaux/animaux-001.json",
-          "nombre": 29,
+          "nombre": 50,
           "ageMin": 4,
           "ageMax": 63
         }
@@ -70,11 +70,11 @@
     {
       "nom": "Culture générale",
       "slug": "culture-generale",
-      "nombre": 100,
+      "nombre": 78,
       "fichiers": [
         {
           "fichier": "questions/culture-generale/culture-generale-001.json",
-          "nombre": 50,
+          "nombre": 28,
           "ageMin": 4,
           "ageMax": 52
         },
@@ -82,7 +82,7 @@
           "fichier": "questions/culture-generale/culture-generale-002.json",
           "nombre": 50,
           "ageMin": 4,
-          "ageMax": 62
+          "ageMax": 55
         }
       ]
     },
@@ -135,19 +135,6 @@
           "nombre": 7,
           "ageMin": 21,
           "ageMax": 63
-        }
-      ]
-    },
-    {
-      "nom": "Math",
-      "slug": "math",
-      "nombre": 50,
-      "fichiers": [
-        {
-          "fichier": "questions/math/math-001.json",
-          "nombre": 50,
-          "ageMin": 5,
-          "ageMax": 60
         }
       ]
     },
