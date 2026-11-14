@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Frise du temps – du Big Bang à nos jours</title>
+<style>
+:root{--bg:#0f1220;--panel:#181c30;--txt:#e8eaf3;--mut:#8b91ad;--line:#3a4066}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:8px 12px;background:var(--panel);display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+header h1{font-size:16px;margin:0 10px 0 0}
+button,input[type=text]{background:#252a47;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px 9px;font-size:13px;cursor:pointer}
+button:hover{background:#343b66}
+button.off{opacity:.35}
+input[type=text]{cursor:text;width:170px}
+label.lin{font-size:13px;display:flex;align-items:center;gap:4px;cursor:pointer}
+#jump,#filters{display:flex;flex-wrap:wrap;gap:5px}
+#view{flex:1;position:relative;overflow-x:scroll;overflow-y:hidden;cursor:grab}
+#view.drag{cursor:grabbing}
+#tl{position:relative;height:100%}
+#axis{position:absolute;top:40px;left:0;right:0;height:26px}
+.tick{position:absolute;top:0;font-size:10px;color:var(--mut);border-left:1px solid var(--line);padding-left:3px;height:20px;white-space:nowrap}
+.seg{position:absolute;height:30px;line-height:30px;font-size:12px;padding:0 6px;white-space:nowrap;overflow:hidden;border-right:1px solid #0008;color:#fff;font-weight:600}
+.ev{position:absolute;width:0}
+.ev .dot{position:absolute;left:-5px;top:0;width:10px;height:10px;border-radius:50%;border:2px solid #fff;cursor:pointer;background:var(--c)}
+.ev .stem{position:absolute;left:0;width:1px;background:var(--c);opacity:.6}
+.ev .lbl{position:absolute;left:6px;font-size:11px;white-space:nowrap;color:var(--txt);background:#0f1220cc;padding:1px 4px;border-radius:3px;cursor:pointer}
+.ev.hl .dot{box-shadow:0 0 0 4px #ffd54f;transform:scale(1.4)}
+.ev.hl .lbl{background:#ffd54f;color:#000}
+#info{position:fixed;right:14px;top:70px;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;display:none;z-index:10;box-shadow:0 6px 24px #000a}
+#info h3{margin:0 0 4px;font-size:15px}
+#info .d{color:var(--mut);font-size:12px;margin-bottom:6px}
+#info p{margin:0;font-size:13px;line-height:1.4}
+#info .x{position:absolute;right:8px;top:4px;cursor:pointer;color:var(--mut)}
+#mini{position:relative;height:34px;background:var(--panel);border-top:1px solid var(--line);cursor:pointer;flex:none}
+#mini .e{position:absolute;top:12px;width:2px;height:10px;background:#8b91ad}
+#mini .vp{position:absolute;top:0;height:100%;background:#ffffff22;border:1px solid #fff8}
+</style>
+</head>
+<body>
+<header>
+ <h1>⏳ Frise du temps</h1>
+ <button id="zin">＋</button><button id="zout">－</button>
+ <input type="text" id="q" placeholder="Rechercher…">
+ <label class="lin"><input type="checkbox" id="lin"> Échelle linéaire</label>
+ <div id="jump"></div>
+ <div id="filters"></div>
+</header>
+<div id="view"><div id="tl"><div id="axis"></div></div></div>
+<div id="mini"></div>
+<div id="info"><span class="x" onclick="this.parentNode.style.display='none'">✕</span><h3 id="it"></h3><div class="d" id="id"></div><p id="ip"></p></div>
+
+<script>
+// ---------- Utilitaires de dates (en "années avant aujourd'hui", BP) ----------
+const NOW=2026;
+const Ga=x=>x*1e9, Ma=x=>x*1e6, Ka=x=>x*1e3;
+const Y=y=>NOW-y; // année calendaire -> BP (négatif = av. J.-C.)
+
+// ---------- Échelle non linéaire par segments [début BP, fin BP, largeur px] ----------
+const SCALE=[
+ [Ga(13.8),Ga(4.5),700],
+ [Ga(4.5),Ga(0.541),800],
+ [Ma(541),Ma(66),900],
+ [Ma(66),Ma(2.6),700],
+ [Ma(2.6),Ka(12),900],
+ [Ka(12),Y(-3300),700],
+ [Y(-3300),Y(476),900],
+ [Y(476),Y(1492),700],
+ [Y(1492),0,1100]
+];
+const TOTAL=SCALE.reduce((s,a)=>s+a[2],0);
+const START=SCALE[0][0];
+let zoom=1, linear=false;
+const LIN_PX_PER_YEAR=0.001; // 1 px = 1000 ans
+
+function pos(bp){
+ if(linear)return (START-bp)*LIN_PX_PER_YEAR*zoom;
+ let x=0;
+ for(const [a,b,w] of SCALE){
+  if(bp<=a&&bp>=b)return (x+(a-bp)/(a-b)*w)*zoom;
+  x+=w;
+ }
+ return bp>START?0:TOTAL*zoom;
+}
+function totalW(){return linear?START*LIN_PX_PER_YEAR*zoom:TOTAL*zoom}
+
+// ---------- Catégories ----------
+const CAT={
+ cosmos:["Cosmos","#7e57c2"],
+ terre:["Terre & géologie","#8d6e63"],
+ vie:["Vie","#43a047"],
+ humain:["Humanité","#ef6c00"],
+ histoire:["Histoire","#1e88e5"],
+ science:["Science & tech","#00acc1"]
+};
+const active=new Set(Object.keys(CAT));
+
+// ---------- Ères / périodes (3 rangées) ----------
+// [nom, début BP, fin BP, couleur]
+const ROW1=[ // éons / grandes divisions
+ ["Hadéen",Ga(4.6),Ga(4.0),"#6d4c41"],["Archéen",Ga(4.0),Ga(2.5),"#8e24aa"],
+ ["Protérozoïque",Ga(2.5),Ma(541),"#3949ab"],["Phanérozoïque",Ma(541),0,"#2e7d32"]
+];
+const ROW2=[ // ères
+ ["Paléozoïque",Ma(541),Ma(252),"#00838f"],["Mésozoïque",Ma(252),Ma(66),"#558b2f"],
+ ["Cénozoïque",Ma(66),0,"#ef6c00"]
+];
+const ROW3=[ // périodes
+ ["Cambrien",Ma(541),Ma(485),"#5c6bc0"],["Ordovicien",Ma(485),Ma(444),"#26a69a"],
+ ["Silurien",Ma(444),Ma(419),"#66bb6a"],["Dévonien",Ma(419),Ma(359),"#8d6e63"],
+ ["Carbonifère",Ma(359),Ma(299),"#546e7a"],["Permien",Ma(299),Ma(252),"#d84315"],
+ ["Trias",Ma(252),Ma(201),"#7b1fa2"],["Jurassique",Ma(201),Ma(145),"#0277bd"],
+ ["Crétacé",Ma(145),Ma(66),"#2e7d32"],["Paléogène",Ma(66),Ma(23),"#f57c00"],
+ ["Néogène",Ma(23),Ma(2.6),"#c62828"],["Quaternaire",Ma(2.6),0,"#6a1b9a"]
+];
+const ROW4=[ // époques récentes / âges de l'humanité
+ ["Paléolithique",Ma(3.3),Ka(12),"#8d6e63"],["Mésolithique",Ka(12),Ka(9),"#7cb342"],
+ ["Néolithique",Ka(9),Y(-3300),"#fb8c00"],["Âge du Bronze",Y(-3300),Y(-1200),"#b8860b"],
+ ["Âge du Fer",Y(-1200),Y(-800),"#78909c"],["Antiquité",Y(-800),Y(476),"#d4a017"],
+ ["Moyen Âge",Y(476),Y(1492),"#6a1b9a"],["Temps modernes",Y(1492),Y(1789),"#1565c0"],
+ ["Époque contemporaine",Y(1789),0,"#c62828"]
+];
+
+// ---------- Événements ----------
+// [nom, BP, catégorie, date lisible, description]
+const E=[
+ ["Big Bang",Ga(13.8),"cosmos","~13,8 Ga","Naissance de l'Univers observable : expansion à partir d'un état extrêmement dense et chaud."],
+ ["Premières étoiles",Ga(13.5),"cosmos","~13,5 Ga","Allumage des premières étoiles, fin des « âges sombres »."],
+ ["Voie lactée",Ga(13.2),"cosmos","~13,2 Ga","Formation des premières structures de notre galaxie."],
+ ["Formation du Soleil",Ga(4.6),"cosmos","~4,6 Ga","Effondrement d'un nuage de gaz et de poussières : naissance du Soleil et du Système solaire."],
+ ["Formation de la Terre",Ga(4.54),"terre","~4,54 Ga","Accrétion de la Terre à partir du disque protoplanétaire."],
+ ["Formation de la Lune",Ga(4.5),"terre","~4,5 Ga","Impact géant (Théia) à l'origine de la Lune."],
+ ["Premiers océans",Ga(4.2),"terre","~4,2 Ga","Condensation de l'eau liquide à la surface."],
+ ["Premières traces de vie",Ga(3.8),"vie","~3,8 Ga","Premiers indices de vie microbienne."],
+ ["Stromatolithes",Ga(3.5),"vie","~3,5 Ga","Colonies de cyanobactéries fossilisées."],
+ ["Photosynthèse",Ga(3.0),"vie","~3 Ga","Les cyanobactéries produisent de l'oxygène."],
+ ["Grande oxydation",Ga(2.4),"terre","~2,4 Ga","L'oxygène s'accumule dans l'atmosphère."],
+ ["Cellules eucaryotes",Ga(1.8),"vie","~1,8 Ga","Apparition des cellules à noyau."],
+ ["Reproduction sexuée",Ga(1.2),"vie","~1,2 Ga","Première reproduction sexuée connue."],
+ ["Pluricellulaires",Ga(0.6),"vie","~600 Ma","Premiers organismes pluricellulaires complexes (faune d'Édiacara)."],
+ ["Explosion cambrienne",Ma(538),"vie","~538 Ma","Diversification rapide des grands groupes animaux."],
+ ["Premiers vertébrés",Ma(520),"vie","~520 Ma","Premiers poissons."],
+ ["Plantes terrestres",Ma(470),"vie","~470 Ma","Les plantes colonisent les continents."],
+ ["Premiers tétrapodes",Ma(375),"vie","~375 Ma","Les vertébrés sortent de l'eau."],
+ ["Premières forêts",Ma(350),"vie","~350 Ma","Grandes forêts du Carbonifère."],
+ ["Extinction du Permien",Ma(252),"vie","~252 Ma","La plus grande extinction : ~90 % des espèces disparaissent."],
+ ["Premiers dinosaures",Ma(230),"vie","~230 Ma","Apparition des dinosaures au Trias."],
+ ["Premiers mammifères",Ma(225),"vie","~225 Ma","Petits mammifères primitifs."],
+ ["Pangée se disloque",Ma(175),"terre","~175 Ma","Fragmentation du supercontinent."],
+ ["Premiers oiseaux",Ma(150),"vie","~150 Ma","Archaeopteryx."],
+ ["Plantes à fleurs",Ma(130),"vie","~130 Ma","Apparition des angiospermes."],
+ ["Tyrannosaure",Ma(68),"vie","~68 Ma","Tyrannosaurus rex."],
+ ["Extinction K-Pg",Ma(66),"vie","~66 Ma","Impact de Chicxulub : fin des dinosaures non aviens."],
+ ["Premiers primates",Ma(55),"vie","~55 Ma","Les primates apparaissent."],
+ ["Himalaya se forme",Ma(50),"terre","~50 Ma","Collision Inde–Asie."],
+ ["Premiers hominoïdes",Ma(25),"humain","~25 Ma","Ancêtres des grands singes."],
+ ["Divergence des hominidés",Ma(13),"humain","~13 Ma","Séparation des lignées de grands singes."],
+ ["Sahelanthropus",Ma(7),"humain","~7 Ma","Sahelanthropus tchadensis, l'un des plus anciens hominidés connus."],
+ ["Toumaï",Ma(7),"humain","~7 Ma (6-7 Ma)","Crâne de Sahelanthropus tchadensis découvert au Tchad en 2001 par Michel Brunet. L'un des plus anciens hominidés connus, proche de la divergence avec les chimpanzés."],
+ ["Orrorin",Ma(6),"humain","~6 Ma","Orrorin tugenensis (Kenya), possible bipédie."],
+ ["Ardipithecus",Ma(4.4),"humain","~4,4 Ma","Ardi, bipédie primitive."],
+ ["Australopithecus",Ma(3.9),"humain","~3,9 Ma","Bipèdes (Lucy : 3,2 Ma)."],
+ ["Lucy",Ma(3.2),"humain","~3,2 Ma","Australopithecus afarensis, découverte en 1974 en Éthiopie."],
+ ["Premiers outils de pierre",Ma(3.3),"humain","~3,3 Ma","Outils de Lomekwi (Kenya)."],
+ ["Homo habilis",Ma(2.4),"humain","~2,4 Ma","Premier du genre Homo, outils oldowayens."],
+ ["Glaciations quaternaires",Ma(2.6),"terre","~2,6 Ma","Début des cycles glaciaires."],
+ ["Homo erectus",Ma(1.9),"humain","~1,9 Ma","Premier à quitter l'Afrique."],
+ ["Maîtrise du feu",Ka(800),"humain","~800 000 ans","Premières traces de feu contrôlé."],
+ ["Homo heidelbergensis",Ka(600),"humain","~600 000 ans","Ancêtre commun probable de Néandertal et de Sapiens."],
+ ["Néandertal",Ka(400),"humain","~400 000 ans","Homo neanderthalensis en Europe."],
+ ["Homo sapiens",Ka(300),"humain","~300 000 ans","Premiers Homo sapiens (Jebel Irhoud, Maroc)."],
+ ["Sortie d'Afrique (sapiens)",Ka(70),"humain","~70 000 ans","Grande migration vers l'Eurasie."],
+ ["Art rupestre",Ka(40),"humain","~40 000 ans","Premières grottes ornées."],
+ ["Disparition de Néandertal",Ka(40),"humain","~40 000 ans","Extinction de Néandertal."],
+ ["Amériques peuplées",Ka(20),"humain","~20 000 ans","Premiers peuplements des Amériques."],
+ ["Grotte de Lascaux",Ka(17),"humain","~17 000 ans","Peintures rupestres célèbres."],
+ ["Fin de la dernière glaciation",Ka(11.7),"terre","~11 700 ans","Début de l'Holocène."],
+ ["Agriculture",Ka(11),"humain","~11 000 ans","Révolution néolithique au Proche-Orient."],
+ ["Göbekli Tepe",Ka(11.5),"humain","~9500 av. J.-C.","Plus ancien site monumental connu."],
+ ["Poterie",Ka(10),"humain","~10 000 ans","Premières céramiques."],
+ ["Premières villes",Y(-7500),"histoire","~7500 av. J.-C.","Çatalhöyük, Jéricho."],
+ ["Cuivre",Y(-5000),"science","~5000 av. J.-C.","Début de la métallurgie."],
+ ["Écriture",Y(-3300),"histoire","~3300 av. J.-C.","Cunéiforme sumérien."],
+ ["Roue",Y(-3500),"science","~3500 av. J.-C.","Invention de la roue en Mésopotamie."],
+ ["Égypte unifiée",Y(-3100),"histoire","~3100 av. J.-C.","Narmer unifie la Haute et la Basse-Égypte."],
+ ["Bronze",Y(-3000),"science","~3000 av. J.-C.","Âge du Bronze."],
+ ["Pyramides de Gizeh",Y(-2560),"histoire","~2560 av. J.-C.","Pyramide de Khéops."],
+ ["Code d'Hammurabi",Y(-1754),"histoire","~1754 av. J.-C.","L'un des plus anciens codes de lois."],
+ ["Toutânkhamon",Y(-1332),"histoire","~1332 av. J.-C.","Pharaon du Nouvel Empire."],
+ ["Âge du Fer",Y(-1200),"science","~1200 av. J.-C.","Généralisation du fer."],
+ ["Effondrement de l'Âge du Bronze",Y(-1177),"histoire","~1177 av. J.-C.","Chute de plusieurs civilisations méditerranéennes."],
+ ["Jeux olympiques",Y(-776),"histoire","776 av. J.-C.","Premiers Jeux olympiques antiques."],
+ ["Fondation de Rome",Y(-753),"histoire","753 av. J.-C.","Date légendaire."],
+ ["Bouddha",Y(-500),"histoire","~500 av. J.-C.","Siddhartha Gautama."],
+ ["Démocratie athénienne",Y(-508),"histoire","508 av. J.-C.","Réformes de Clisthène."],
+ ["Bataille de Marathon",Y(-490),"histoire","490 av. J.-C.","Victoire grecque sur les Perses."],
+ ["Socrate",Y(-399),"histoire","399 av. J.-C.","Mort de Socrate."],
+ ["Alexandre le Grand",Y(-336),"histoire","336–323 av. J.-C.","Conquête de l'empire perse."],
+ ["Grande Muraille",Y(-221),"histoire","221 av. J.-C.","Qin Shi Huang unifie la Chine."],
+ ["Destruction de Carthage",Y(-146),"histoire","146 av. J.-C.","Fin de la 3e guerre punique."],
+ ["Jules César",Y(-44),"histoire","44 av. J.-C.","Assassinat de César."],
+ ["Empire romain",Y(-27),"histoire","27 av. J.-C.","Auguste, premier empereur."],
+ ["Jésus de Nazareth",Y(30),"histoire","~30","Crucifixion, naissance du christianisme."],
+ ["Éruption du Vésuve",Y(79),"histoire","79","Destruction de Pompéi."],
+ ["Colisée",Y(80),"histoire","80","Inauguration à Rome."],
+ ["Édit de Milan",Y(313),"histoire","313","Tolérance du christianisme."],
+ ["Chute de Rome d'Occident",Y(476),"histoire","476","Fin de l'Empire romain d'Occident."],
+ ["Clovis",Y(496),"histoire","496","Baptême de Clovis."],
+ ["Hégire",Y(622),"histoire","622","Début du calendrier musulman."],
+ ["Charlemagne empereur",Y(800),"histoire","800","Couronnement à Rome."],
+ ["Vikings",Y(793),"histoire","793","Début de l'ère viking."],
+ ["Hugues Capet",Y(987),"histoire","987","Début de la dynastie capétienne."],
+ ["Bataille d'Hastings",Y(1066),"histoire","1066","Conquête normande de l'Angleterre."],
+ ["Première croisade",Y(1095),"histoire","1095","Appel d'Urbain II."],
+ ["Magna Carta",Y(1215),"histoire","1215","Charte limitant le pouvoir royal anglais."],
+ ["Peste noire",Y(1347),"histoire","1347","Pandémie qui tue ~1/3 de l'Europe."],
+ ["Guerre de Cent Ans",Y(1337),"histoire","1337–1453","Conflit franco-anglais."],
+ ["Jeanne d'Arc",Y(1431),"histoire","1431","Bûcher de Jeanne d'Arc."],
+ ["Imprimerie",Y(1450),"science","~1450","Gutenberg."],
+ ["Chute de Constantinople",Y(1453),"histoire","1453","Fin de l'Empire byzantin."],
+ ["Colomb en Amérique",Y(1492),"histoire","1492","Arrivée en Amérique."],
+ ["Vasco de Gama",Y(1498),"histoire","1498","Route maritime des Indes."],
+ ["Réforme protestante",Y(1517),"histoire","1517","Thèses de Luther."],
+ ["Tour du monde de Magellan",Y(1522),"histoire","1522","Première circumnavigation."],
+ ["Héliocentrisme",Y(1543),"science","1543","Copernic."],
+ ["Shakespeare",Y(1600),"histoire","~1600","Âge d'or du théâtre élisabéthain."],
+ ["Lunette de Galilée",Y(1609),"science","1609","Observations astronomiques."],
+ ["Guerre de Trente Ans",Y(1618),"histoire","1618–1648","Conflit européen majeur."],
+ ["Louis XIV",Y(1661),"histoire","1661","Début du règne personnel."],
+ ["Principia de Newton",Y(1687),"science","1687","Gravitation universelle."],
+ ["Machine à vapeur",Y(1712),"science","1712","Newcomen, puis Watt (1769)."],
+ ["Encyclopédie",Y(1751),"histoire","1751","Diderot et d'Alembert."],
+ ["Indépendance américaine",Y(1776),"histoire","1776","Déclaration d'indépendance."],
+ ["Révolution française",Y(1789),"histoire","1789","Prise de la Bastille."],
+ ["Napoléon empereur",Y(1804),"histoire","1804","Sacre de Napoléon Ier."],
+ ["Waterloo",Y(1815),"histoire","1815","Défaite finale de Napoléon."],
+ ["Locomotive",Y(1825),"science","1825","Premier chemin de fer public."],
+ ["Photographie",Y(1839),"science","1839","Daguerréotype."],
+ ["Printemps des peuples",Y(1848),"histoire","1848","Révolutions en Europe."],
+ ["Origine des espèces",Y(1859),"science","1859","Darwin."],
+ ["Guerre de Sécession",Y(1861),"histoire","1861–1865","États-Unis."],
+ ["Dynamite",Y(1867),"science","1867","Alfred Nobel."],
+ ["Téléphone",Y(1876),"science","1876","Bell."],
+ ["Ampoule électrique",Y(1879),"science","1879","Edison."],
+ ["Automobile",Y(1886),"science","1886","Benz."],
+ ["Cinéma",Y(1895),"science","1895","Frères Lumière."],
+ ["Relativité",Y(1905),"science","1905","Einstein."],
+ ["Titanic",Y(1912),"histoire","1912","Naufrage."],
+ ["Première Guerre mondiale",Y(1914),"histoire","1914–1918","Conflit mondial."],
+ ["Révolution russe",Y(1917),"histoire","1917","Prise du pouvoir par les bolcheviks."],
+ ["Pénicilline",Y(1928),"science","1928","Fleming."],
+ ["Crise de 1929",Y(1929),"histoire","1929","Krach de Wall Street."],
+ ["Seconde Guerre mondiale",Y(1939),"histoire","1939–1945","Conflit le plus meurtrier."],
+ ["Hiroshima",Y(1945),"histoire","1945","Première bombe atomique."],
+ ["ONU",Y(1945),"histoire","1945","Fondation de l'ONU."],
+ ["ADN",Y(1953),"science","1953","Watson, Crick et Franklin."],
+ ["Spoutnik",Y(1957),"science","1957","Premier satellite."],
+ ["Gagarine",Y(1961),"science","1961","Premier homme dans l'espace."],
+ ["Mur de Berlin",Y(1961),"histoire","1961","Construction du mur."],
+ ["Apollo 11",Y(1969),"science","1969","Premiers pas sur la Lune."],
+ ["Internet (ARPANET)",Y(1969),"science","1969","Ancêtre d'Internet."],
+ ["Chute du mur de Berlin",Y(1989),"histoire","1989","Fin de la guerre froide."],
+ ["World Wide Web",Y(1991),"science","1991","Tim Berners-Lee."],
+ ["Euro",Y(1999),"histoire","1999","Création de la monnaie unique."],
+ ["11 septembre",Y(2001),"histoire","2001","Attentats aux États-Unis."],
+ ["Génome humain",Y(2003),"science","2003","Séquençage complet."],
+ ["iPhone",Y(2007),"science","2007","Naissance du smartphone moderne."],
+ ["COVID-19",Y(2020),"histoire","2020","Pandémie mondiale."],
+ ["IA générative",Y(2022),"science","2022","ChatGPT et les IA génératives grand public."]
+];
+
+// ---------- Rendu ----------
+const view=document.getElementById('view'),tl=document.getElementById('tl'),
+ axis=document.getElementById('axis'),mini=document.getElementById('mini'),
+ info=document.getElementById('info'),q=document.getElementById('q'),
+ lin=document.getElementById('lin'),jump=document.getElementById('jump'),
+ filters=document.getElementById('filters');
+
+function fmt(bp){
+ if(bp>=1e9)return (bp/1e9).toFixed(1).replace('.0','')+' Ga';
+ if(bp>=1e6)return Math.round(bp/1e6)+' Ma';
+ if(bp>=1e4)return Math.round(bp/1e3)+' ka';
+ const y=NOW-bp;
+ return y<=0?Math.abs(Math.round(y))+' av. J.-C.':Math.round(y);
+}
+
+function addSegs(rows,top){
+ rows.forEach(([n,a,b,c])=>{
+  const x1=pos(a),x2=pos(b);
+  if(x2-x1<1)return;
+  const d=document.createElement('div');
+  d.className='seg';d.style.cssText=`left:${x1}px;width:${x2-x1}px;top:${top}px;background:${c}`;
+  d.textContent=n;d.title=n;tl.appendChild(d);
+ });
+}
+
+function render(){
+ tl.querySelectorAll('.seg,.ev').forEach(n=>n.remove());
+ axis.innerHTML='';
+ tl.style.width=totalW()+'px';
+
+ // Graduations
+ const ticks=[];
+ if(linear){
+  const n=Math.max(10,Math.round(totalW()/160));
+  for(let i=0;i<n;i++)ticks.push(START*(1-i/n));
+ }else{
+  SCALE.forEach(([a,b,w])=>{
+   const n=Math.max(4,Math.round(w*zoom/160));
+   for(let i=0;i<n;i++)ticks.push(a-(a-b)*i/n);
+  });
+ }
+ ticks.push(0);
+ ticks.forEach(t=>{
+  const d=document.createElement('div');d.className='tick';
+  d.style.left=pos(t)+'px';d.textContent=fmt(t);axis.appendChild(d);
+ });
+
+ // Bandes d'ères
+ addSegs(ROW1,72);addSegs(ROW2,104);addSegs(ROW3,136);addSegs(ROW4,168);
+
+ // Événements (alternance sur plusieurs niveaux pour limiter les chevauchements)
+ const evs=E.filter(e=>active.has(e[2])).sort((a,b)=>b[1]-a[1]);
+ const H=view.clientHeight;
+ const baseTop=210, levels=Math.max(4,Math.floor((H-baseTop-20)/22));
+ const lastX=new Array(levels).fill(-1e9);
+ evs.forEach(e=>{
+  const x=pos(e[1]);
+  let lv=0;
+  for(let i=0;i<levels;i++){if(x-lastX[i]>110){lv=i;break}lv=i}
+  lastX[lv]=x;
+  const top=baseTop+lv*22;
+  const d=document.createElement('div');d.className='ev';d._e=e;
+  d.style.left=x+'px';d.style.top=top+'px';d.style.setProperty('--c',CAT[e[2]][1]);
+  d.innerHTML=`<div class="dot"></div><div class="lbl">${e[0]}</div>`;
+  d.onclick=()=>{
+   document.getElementById('it').textContent=e[0];
+   document.getElementById('id').textContent=e[3]+' · '+CAT[e[2]][0];
+   document.getElementById('ip').textContent=e[4];
+   info.style.display='block';
+  };
+  tl.appendChild(d);
+ });
+ drawMini();
+}
+
+function drawMini(){
+ mini.innerHTML='';
+ const W=mini.clientWidth;
+ E.forEach(e=>{
+  const d=document.createElement('div');d.className='e';
+  d.style.left=(pos(e[1])/totalW()*W)+'px';mini.appendChild(d);
+ });
+ const vp=document.createElement('div');vp.className='vp';vp.id='vp';mini.appendChild(vp);
+ updVp();
+}
+function updVp(){
+ const vp=document.getElementById('vp');if(!vp)return;
+ const W=mini.clientWidth,t=totalW();
+ vp.style.left=(view.scrollLeft/t*W)+'px';
+ vp.style.width=Math.max(4,view.clientWidth/t*W)+'px';
+}
+view.addEventListener('scroll',updVp);
+mini.addEventListener('click',e=>{
+ const r=mini.getBoundingClientRect();
+ view.scrollLeft=(e.clientX-r.left)/r.width*totalW()-view.clientWidth/2;
+});
+
+// Zoom
+function setZoom(z){
+ const c=(view.scrollLeft+view.clientWidth/2)/totalW();
+ zoom=Math.max(0.3,Math.min(6,z));
+ render();
+ view.scrollLeft=c*totalW()-view.clientWidth/2;
+}
+document.getElementById('zin').onclick=()=>setZoom(zoom*1.4);
+document.getElementById('zout').onclick=()=>setZoom(zoom/1.4);
+view.addEventListener('wheel',e=>{
+ if(e.ctrlKey){e.preventDefault();setZoom(zoom*(e.deltaY<0?1.15:1/1.15));}
+ else if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();view.scrollLeft+=e.deltaY*2;}
+},{passive:false});
+
+// Glisser-déposer
+let dr=false,sx=0,sl=0;
+view.addEventListener('mousedown',e=>{dr=true;sx=e.clientX;sl=view.scrollLeft;view.classList.add('drag')});
+window.addEventListener('mouseup',()=>{dr=false;view.classList.remove('drag')});
+window.addEventListener('mousemove',e=>{if(dr)view.scrollLeft=sl-(e.clientX-sx)});
+window.addEventListener('keydown',e=>{
+ if(e.target.tagName==='INPUT')return;
+ if(e.key==='ArrowRight')view.scrollLeft+=200;
+ if(e.key==='ArrowLeft')view.scrollLeft-=200;
+ if(e.key==='+')setZoom(zoom*1.4);
+ if(e.key==='-')setZoom(zoom/1.4);
+});
+
+// Boutons de saut
+[["Big Bang",Ga(13.8)],["Terre",Ga(4.5)],["Vie",Ga(3.8)],["Dinosaures",Ma(230)],
+ ["Humanité",Ma(7)],["Antiquité",Y(-3300)],["Moyen Âge",Y(476)],
+ ["Moderne",Y(1492)],["Aujourd'hui",0]].forEach(([n,bp])=>{
+ const b=document.createElement('button');b.textContent=n;
+ b.onclick=()=>view.scrollTo({left:pos(bp)-80,behavior:'smooth'});
+ jump.appendChild(b);
+});
+
+// Filtres
+Object.entries(CAT).forEach(([k,[n,c]])=>{
+ const b=document.createElement('button');b.textContent=n;b.style.borderColor=c;
+ b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('off');render()};
+ filters.appendChild(b);
+});
+
+// Recherche
+q.addEventListener('input',()=>{
+ const s=q.value.trim().toLowerCase();let first=null;
+ tl.querySelectorAll('.ev').forEach(d=>{
+  const hit=s&&(d._e[0].toLowerCase().includes(s)||d._e[4].toLowerCase().includes(s));
+  d.classList.toggle('hl',!!hit);
+  if(hit&&!first)first=d;
+ });
+ if(first)view.scrollTo({left:parseFloat(first.style.left)-200,behavior:'smooth'});
+});
+
+// Échelle linéaire
+lin.addEventListener('change',()=>{
+ linear=lin.checked;zoom=1;render();view.scrollLeft=0;
+});
+
+window.addEventListener('resize',render);
+render();
+</script>
+</body>
+</html>
