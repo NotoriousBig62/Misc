@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 400,
+  "total": 450,
   "themes": [
     {
       "nom": "Animaux",
@@ -135,6 +135,19 @@
           "nombre": 7,
           "ageMin": 21,
           "ageMax": 63
+        }
+      ]
+    },
+    {
+      "nom": "Math",
+      "slug": "math",
+      "nombre": 50,
+      "fichiers": [
+        {
+          "fichier": "questions/math/math-001.json",
+          "nombre": 50,
+          "ageMin": 5,
+          "ageMax": 60
         }
       ]
     },
