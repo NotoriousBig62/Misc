@@ -45,6 +45,7 @@ input{cursor:text;width:170px}
 <header>
 <h1>⏳ Frise du temps</h1>
 <button id="zo">−</button><button id="zi">+</button>
+<label><input id="linearScale" type="checkbox" style="width:auto;cursor:pointer"> Échelle linéaire</label>
 <input id="q" placeholder="Rechercher…">
 <div id="jump"></div>
 <div id="filters"></div>
@@ -75,14 +76,31 @@ const SCALE=[
  [Y(1800),0,2600]
 ];
 const TOTAL=SCALE.reduce((a,s)=>a+s[2],0);
-let zoom=1;
+const START=SCALE[0][0];
+let zoom=1,linearScale=false;
 function pos(bp){
+ if(linearScale){
+  if(bp>START)return 0;
+  if(bp<0)return TOTAL*zoom;
+  return (START-bp)/START*TOTAL*zoom;
+ }
  let x=0;
  for(const [a,b,w] of SCALE){
   if(bp<=a && bp>=b){return (x+(a-bp)/(a-b)*w)*zoom}
   x+=w;
  }
  return bp>SCALE[0][0]?0:TOTAL*zoom;
+}
+function bpAt(px){
+ const x=px/zoom;
+ if(linearScale)return START*(1-Math.max(0,Math.min(TOTAL,x))/TOTAL);
+ if(x<=0)return START;
+ let offset=0;
+ for(const [a,b,w] of SCALE){
+  if(x<=offset+w)return a-(x-offset)/w*(a-b);
+  offset+=w;
+ }
+ return 0;
 }
 
 /* Périodes : [nom, début bp, fin bp, couleur, niveau(1,2,3)] */
@@ -139,11 +157,19 @@ function render(){
  });
  // Graduations
  const ticks=[];
- SCALE.forEach(([a,b,w])=>{
-  const n=Math.max(4,Math.round(w*zoom/160));
-  for(let i=0;i<n;i++){ticks.push(a-(a-b)*i/n)}
- });
- ticks.push(0);
+ if(linearScale){
+  const raw=START/Math.max(4,Math.round(TOTAL*zoom/160));
+  const pow=10**Math.floor(Math.log10(raw)),ratio=raw/pow;
+  const step=(ratio<=1?1:ratio<=2?2:ratio<=5?5:10)*pow;
+  for(let bp=START;bp>0;bp-=step)ticks.push(bp);
+  ticks.push(0);
+ }else{
+  SCALE.forEach(([a,b,w])=>{
+   const n=Math.max(4,Math.round(w*zoom/160));
+   for(let i=0;i<n;i++){ticks.push(a-(a-b)*i/n)}
+  });
+  ticks.push(0);
+ }
  ticks.forEach(bp=>{
   const t=document.createElement('div');t.className='tick';t.style.left=pos(bp)+'px';t.textContent=fmt(bp);axis.appendChild(t);
  });
@@ -187,13 +213,19 @@ function updWin(){
 view.addEventListener('scroll',updWin);
 mini.addEventListener('click',ev=>{
  const r=mini.getBoundingClientRect();
- view.scrollLeft=(ev.clientX-r.left)/r.width*tl.scrollWidth-view.clientWidth/2;
+ const bp=bpAt((ev.clientX-r.left)/r.width*tl.scrollWidth);
+ view.scrollLeft=pos(bp)-view.clientWidth/2;
 });
 function setZoom(z,cx){
  const rel=(view.scrollLeft+(cx??view.clientWidth/2))/zoom;
  zoom=Math.min(6,Math.max(0.3,z));render();
  view.scrollLeft=rel*zoom-(cx??view.clientWidth/2);
 }
+document.getElementById('linearScale').addEventListener('change',e=>{
+ const center=bpAt(view.scrollLeft+view.clientWidth/2);
+ linearScale=e.target.checked;render();
+ view.scrollLeft=pos(center)-view.clientWidth/2;
+});
 zi.onclick=()=>setZoom(zoom*1.4);zo.onclick=()=>setZoom(zoom/1.4);
 view.addEventListener('wheel',e=>{
  if(e.ctrlKey){e.preventDefault();setZoom(zoom*(e.deltaY<0?1.15:1/1.15),e.clientX)}
