@@ -52,6 +52,7 @@ input{cursor:text;width:170px}
 <div id="view"><div id="tl"><div id="axis"></div></div></div>
 <div id="mini"><div id="win"></div></div>
 <div id="panel"><button class="x" onclick="panel.style.display='none'">✕</button><div class="c" id="pc"></div><h2 id="pt"></h2><div class="d" id="pd"></div><p id="pp"></p></div>
+<div id="loadError" role="alert" style="display:none;position:fixed;inset:12px 12px auto;background:#7b2525;color:#fff;padding:12px;border-radius:8px;z-index:30"></div>
 
 <script>
 /* Dates en "années avant aujourd'hui (BP)" ; l'an 2026 = 0.
@@ -109,184 +110,8 @@ const P2=[
 /* Catégories */
 const CAT={cosmos:["Cosmos","#b388ff"],terre:["Terre","#ff8a65"],vie:["Vie","#66bb6a"],humain:["Humanité","#ffca28"],civ:["Civilisations","#42a5f5"],pol:["Politique/Guerre","#ef5350"],sci:["Sciences/Tech","#26c6da"],art:["Arts/Religion","#ec407a"]};
 
-/* Événements : [nom, bp, catégorie, date lisible, description] */
-const E=[
-["Big Bang",Ga(13.8),"cosmos","13,8 Ga","Naissance de l'Univers, de l'espace et du temps."],
-["Premières étoiles",Ga(13.5),"cosmos","~13,5 Ga","Fin des âges sombres : formation des premières étoiles."],
-["Premières galaxies",Ga(13.3),"cosmos","~13,3 Ga","Les galaxies se forment par agrégation de matière."],
-["Formation du Soleil",Ga(4.6),"cosmos","4,6 Ga","Effondrement d'une nébuleuse : naissance du Système solaire."],
-["Formation de la Terre",Ga(4.54),"terre","4,54 Ga","Accrétion de la Terre à partir du disque protoplanétaire."],
-["Impact de Théia / Lune",Ga(4.51),"terre","~4,5 Ga","Collision géante à l'origine de la Lune."],
-["Premiers océans",Ga(4.3),"terre","~4,3 Ga","L'eau liquide s'accumule en surface."],
-["Bombardement tardif",Ga(3.9),"terre","~4,1-3,8 Ga","Période de forts impacts météoritiques."],
-["Premières traces de vie",Ga(3.8),"vie","~3,8 Ga","Premiers micro-organismes (procaryotes)."],
-["Stromatolites",Ga(3.5),"vie","~3,5 Ga","Colonies de cyanobactéries fossilisées."],
-["Photosynthèse oxygénique",Ga(2.7),"vie","~2,7 Ga","Les cyanobactéries produisent de l'oxygène."],
-["Grande Oxydation",Ga(2.4),"terre","~2,4 Ga","L'oxygène s'accumule dans l'atmosphère."],
-["Cellules eucaryotes",Ga(1.8),"vie","~1,8 Ga","Apparition des cellules à noyau."],
-["Reproduction sexuée",Ga(1.2),"vie","~1,2 Ga","Premiers organismes à reproduction sexuée."],
-["Terre boule de neige",Ma(700),"terre","~720-635 Ma","Glaciations globales (Cryogénien)."],
-["Faune d'Édiacara",Ma(570),"vie","~570 Ma","Premiers organismes multicellulaires complexes."],
-["Explosion cambrienne",Ma(538),"vie","~538 Ma","Diversification rapide des grands groupes animaux."],
-["Premiers poissons",Ma(500),"vie","~500 Ma","Premiers vertébrés."],
-["Plantes terrestres",Ma(470),"vie","~470 Ma","Colonisation des continents par les plantes."],
-["Premiers tétrapodes",Ma(375),"vie","~375 Ma","Les vertébrés sortent de l'eau."],
-["Forêts du Carbonifère",Ma(330),"vie","~360-300 Ma","Immenses forêts, origine du charbon."],
-["Pangée",Ma(300),"terre","~300 Ma","Supercontinent unique."],
-["Extinction Permien-Trias",Ma(252),"terre","252 Ma","La plus grande extinction : ~90 % des espèces."],
-["Premiers dinosaures",Ma(230),"vie","~230 Ma","Les dinosaures apparaissent au Trias."],
-["Premiers mammifères",Ma(225),"vie","~225 Ma","Petits mammifères primitifs."],
-["Éclatement de la Pangée",Ma(175),"terre","~175 Ma","Les continents commencent à se séparer."],
-["Archéoptéryx",Ma(150),"vie","~150 Ma","Forme de transition dinosaure-oiseau."],
-["Plantes à fleurs",Ma(130),"vie","~130 Ma","Apparition des angiospermes."],
-["Tyrannosaurus rex",Ma(68),"vie","~68-66 Ma","L'un des derniers grands dinosaures."],
-["Extinction Crétacé-Paléogène",Ma(66),"terre","66 Ma","Impact de Chicxulub : fin des dinosaures non aviens."],
-["Radiation des mammifères",Ma(60),"vie","~66-50 Ma","Les mammifères se diversifient."],
-["Premiers primates",Ma(55),"vie","~55 Ma","Ancêtres des singes et de l'humain."],
-["Formation de l'Himalaya",Ma(50),"terre","~50 Ma","Collision Inde-Asie."],
-["Antarctique glacé",Ma(34),"terre","~34 Ma","Début de la glaciation antarctique."],
-["Divergence des grands singes",Ma(15),"vie","~15 Ma","Séparation des lignées de grands singes."],
-["Divergence humain-chimpanzé",Ma(7),"humain","~7-6 Ma","Séparation des lignées humaine et chimpanzé."],
-["Sahelanthropus",Ma(7),"humain","~7 Ma","Un des plus anciens hominidés connus (Tchad)."],
-["Toumaï",Ma(7),"humain","~7 Ma (6-7 Ma)","Sahelanthropus tchadensis, crâne découvert au Tchad en 2001 par Michel Brunet. L'un des plus anciens hominidés connus, probablement proche de la divergence avec les chimpanzés."],
-["Australopithèque Lucy",Ma(3.2),"humain","3,2 Ma","Australopithecus afarensis, bipède (Éthiopie)."],
-["Début des glaciations quaternaires",Ma(2.58),"terre","2,58 Ma","Cycles glaciaires/interglaciaires."],
-["Premiers outils de pierre",Ma(2.6),"humain","~2,6 Ma","Culture oldowayenne."],
-["Homo habilis",Ma(2.4),"humain","~2,4 Ma","Premier représentant du genre Homo."],
-["Homo erectus",Ma(1.9),"humain","~1,9 Ma","Premier hominidé à sortir d'Afrique."],
-["Maîtrise du feu",ka(800),"humain","~1 Ma – 400 ka","Usage contrôlé du feu par Homo erectus."],
-["Homo sapiens",ka(300),"humain","~300 ka","Apparition d'Homo sapiens (Jebel Irhoud)."],
-["Neandertal",ka(200),"humain","~400-40 ka","Homo neanderthalensis en Europe et Asie."],
-["Sortie d'Afrique de Sapiens",ka(70),"humain","~70 ka","Grande migration vers l'Eurasie."],
-["Éruption du Toba",ka(74),"terre","~74 ka","Super-éruption volcanique en Indonésie."],
-["Peuplement de l'Australie",ka(50),"humain","~50 ka","Arrivée de Sapiens en Australie."],
-["Art pariétal",ka(40),"art","~40 ka","Grottes ornées (Chauvet ~36 ka, Lascaux ~20 ka)."],
-["Disparition de Neandertal",ka(40),"humain","~40 ka","Extinction de Neandertal."],
-["Dernier maximum glaciaire",ka(20),"terre","~20 ka","Extension maximale des calottes."],
-["Peuplement des Amériques",ka(16),"humain","~16-15 ka","Arrivée en Amérique."],
-["Fin de la dernière glaciation",ka(11.7),"terre","11 700 ans","Début de l'Holocène."],
-["Göbekli Tepe",ka(11.5),"art","~9500 av. J.-C.","Plus ancien site monumental connu (Turquie)."],
-["Révolution néolithique",ka(10),"humain","~10 000 av. J.-C.","Agriculture et élevage, sédentarisation."],
-["Jéricho",Y(-8000),"civ","~8000 av. J.-C.","Une des plus anciennes villes."],
-["Poterie",Y(-7000),"sci","~7000 av. J.-C.","Généralisation de la céramique."],
-["Çatal Höyük",Y(-7000),"civ","~7000 av. J.-C.","Grande agglomération néolithique."],
-["Cuivre travaillé",Y(-5000),"sci","~5000 av. J.-C.","Début de la métallurgie."],
-["Roue",Y(-3500),"sci","~3500 av. J.-C.","Invention de la roue en Mésopotamie."],
-["Écriture cunéiforme",Y(-3300),"sci","~3300 av. J.-C.","Sumer : début de l'écriture, début de l'Histoire."],
-["Hiéroglyphes",Y(-3200),"sci","~3200 av. J.-C.","Écriture égyptienne."],
-["Unification de l'Égypte",Y(-3100),"civ","~3100 av. J.-C.","Narmer unifie la Haute et Basse-Égypte."],
-["Stonehenge",Y(-3000),"art","~3000 av. J.-C.","Monument mégalithique."],
-["Civilisation de l'Indus",Y(-2600),"civ","~2600 av. J.-C.","Harappa, Mohenjo-Daro."],
-["Pyramide de Khéops",Y(-2560),"art","~2560 av. J.-C.","Grande Pyramide de Gizeh."],
-["Empire d'Akkad",Y(-2334),"pol","~2334 av. J.-C.","Sargon d'Akkad : premier empire."],
-["Code d'Hammurabi",Y(-1750),"pol","~1750 av. J.-C.","Un des premiers codes de lois écrits."],
-["Civilisation minoenne",Y(-2000),"civ","~2700-1450 av. J.-C.","Crète, palais de Cnossos."],
-["Akhénaton",Y(-1350),"art","~1353 av. J.-C.","Pharaon du culte d'Aton."],
-["Ramsès II",Y(-1279),"pol","1279 av. J.-C.","Règne de Ramsès II ; bataille de Qadesh (1274)."],
-["Effondrement de l'âge du bronze",Y(-1200),"pol","~1200 av. J.-C.","Chute de nombreuses cités et empires."],
-["Alphabet phénicien",Y(-1050),"sci","~1050 av. J.-C.","Ancêtre des alphabets grec et latin."],
-["Royaume d'Israël (David)",Y(-1000),"pol","~1000 av. J.-C.","Royaume unifié d'Israël."],
-["Premiers Jeux olympiques",Y(-776),"art","776 av. J.-C.","Olympie, Grèce."],
-["Fondation de Rome",Y(-753),"civ","753 av. J.-C.","Date traditionnelle."],
-["Homère",Y(-750),"art","~VIIIe s. av. J.-C.","L'Iliade et l'Odyssée."],
-["Empire perse achéménide",Y(-550),"pol","550 av. J.-C.","Cyrus le Grand fonde l'empire."],
-["Bouddha",Y(-500),"art","~VIe-Ve s. av. J.-C.","Siddhartha Gautama, fondateur du bouddhisme."],
-["Confucius",Y(-551),"art","551-479 av. J.-C.","Philosophe chinois."],
-["République romaine",Y(-509),"pol","509 av. J.-C.","Chute de la monarchie romaine."],
-["Démocratie athénienne",Y(-508),"pol","508 av. J.-C.","Réformes de Clisthène."],
-["Guerres médiques / Marathon",Y(-490),"pol","490 av. J.-C.","Victoire grecque à Marathon ; Salamine en 480."],
-["Siècle de Périclès",Y(-450),"art","~461-429 av. J.-C.","Âge d'or d'Athènes, Parthénon."],
-["Socrate",Y(-399),"art","399 av. J.-C.","Procès et mort de Socrate."],
-["Platon / Aristote",Y(-347),"art","~387-322 av. J.-C.","Fondation de l'Académie ; Lycée."],
-["Alexandre le Grand",Y(-336),"pol","336-323 av. J.-C.","Conquête de l'Empire perse jusqu'à l'Indus."],
-["Empire maurya",Y(-322),"pol","322 av. J.-C.","Chandragupta ; Ashoka (~268)."],
-["Euclide",Y(-300),"sci","~300 av. J.-C.","Les Éléments : géométrie."],
-["Archimède",Y(-250),"sci","~287-212 av. J.-C.","Mathématicien et ingénieur de Syracuse."],
-["Unification de la Chine (Qin)",Y(-221),"pol","221 av. J.-C.","Qin Shi Huang, 1er empereur ; Grande Muraille."],
-["Dynastie Han",Y(-202),"pol","202 av. J.-C.","Route de la soie, papier (~105 ap. J.-C.)."],
-["Destruction de Carthage",Y(-146),"pol","146 av. J.-C.","Fin des guerres puniques."],
-["Jules César",Y(-49),"pol","49-44 av. J.-C.","Rubicon ; assassiné aux Ides de mars 44."],
-["Empire romain (Auguste)",Y(-27),"pol","27 av. J.-C.","Octave devient Auguste."],
-["Jésus de Nazareth",Y(30),"art","~30 apr. J.-C.","Origine du christianisme."],
-["Éruption du Vésuve",Y(79),"terre","79","Destruction de Pompéi et Herculanée."],
-["Colisée",Y(80),"art","80","Inauguration à Rome."],
-["Empire romain à son apogée",Y(117),"pol","117","Règne de Trajan."],
-["Édit de Milan",Y(313),"art","313","Tolérance du christianisme."],
-["Constantinople",Y(330),"civ","330","Nouvelle capitale de l'Empire."],
-["Division de l'Empire romain",Y(395),"pol","395","Empires d'Occident et d'Orient."],
-["Chute de Rome d'Occident",Y(476),"pol","476","Fin de l'Antiquité, début du Moyen Âge."],
-["Baptême de Clovis",Y(496),"pol","~496","Royaume franc."],
-["Justinien / Sainte-Sophie",Y(537),"art","527-565 / 537","Corpus juris civilis."],
-["Hégire / Islam",Y(622),"art","622","Début du calendrier musulman."],
-["Califat omeyyade",Y(661),"pol","661","Expansion de l'Islam."],
-["Bataille de Poitiers",Y(732),"pol","732","Charles Martel."],
-["Charlemagne empereur",Y(800),"pol","800","Couronnement à Rome."],
-["Traité de Verdun",Y(843),"pol","843","Partage de l'Empire carolingien."],
-["Vikings",Y(793),"pol","793-1066","Raids et exploration (Amérique ~1000)."],
-["Hugues Capet",Y(987),"pol","987","Début des Capétiens."],
-["Schisme d'Orient",Y(1054),"art","1054","Séparation catholiques/orthodoxes."],
-["Hastings / Guillaume",Y(1066),"pol","1066","Conquête normande de l'Angleterre."],
-["Première croisade",Y(1096),"pol","1096-1099","Prise de Jérusalem 1099."],
-["Notre-Dame de Paris",Y(1163),"art","1163","Début de la construction."],
-["Magna Carta",Y(1215),"pol","1215","Limitation du pouvoir royal anglais."],
-["Gengis Khan",Y(1206),"pol","1206","Empire mongol."],
-["Marco Polo",Y(1271),"civ","1271-1295","Voyage en Chine."],
-["Peste noire",Y(1347),"terre","1347-1351","~un tiers de la population européenne."],
-["Guerre de Cent Ans",Y(1337),"pol","1337-1453","France-Angleterre ; Jeanne d'Arc (1429)."],
-["Chute de Constantinople",Y(1453),"pol","1453","Prise par les Ottomans ; fin du Moyen Âge."],
-["Imprimerie (Gutenberg)",Y(1450),"sci","~1450","Révolution de l'information."],
-["Colomb en Amérique",Y(1492),"civ","1492","Début des Temps modernes."],
-["Vasco de Gama",Y(1498),"civ","1498","Route maritime vers l'Inde."],
-["Léonard de Vinci / Joconde",Y(1503),"art","~1503","Haute Renaissance."],
-["Réforme protestante",Y(1517),"art","1517","Luther, 95 thèses."],
-["Magellan",Y(1522),"civ","1519-1522","Premier tour du monde."],
-["Copernic",Y(1543),"sci","1543","Héliocentrisme."],
-["Galilée",Y(1610),"sci","1610","Lunette astronomique."],
-["Édit de Nantes",Y(1598),"pol","1598","Tolérance religieuse en France."],
-["Guerre de Trente Ans",Y(1618),"pol","1618-1648","Traités de Westphalie."],
-["Louis XIV",Y(1661),"pol","1643-1715","Règne personnel dès 1661 ; Versailles."],
-["Newton / Principia",Y(1687),"sci","1687","Gravitation universelle."],
-["Les Lumières",Y(1750),"art","XVIIIe s.","Voltaire, Rousseau, Diderot."],
-["Machine à vapeur (Watt)",Y(1769),"sci","1769","Début de la révolution industrielle."],
-["Indépendance des États-Unis",Y(1776),"pol","1776","Déclaration d'indépendance."],
-["Révolution française",Y(1789),"pol","1789","Début de l'Époque contemporaine."],
-["Napoléon empereur",Y(1804),"pol","1804","Premier Empire ; Waterloo en 1815."],
-["Locomotive à vapeur",Y(1825),"sci","1825","Premiers chemins de fer."],
-["Darwin / Origine des espèces",Y(1859),"sci","1859","Théorie de l'évolution."],
-["Guerre de Sécession",Y(1861),"pol","1861-1865","États-Unis ; abolition de l'esclavage."],
-["Unité italienne / allemande",Y(1871),"pol","1861 / 1871","Unification de l'Italie et de l'Allemagne."],
-["Téléphone / Ampoule",Y(1879),"sci","1876 / 1879","Bell ; Edison."],
-["Tour Eiffel",Y(1889),"art","1889","Exposition universelle de Paris."],
-["Rayons X / Radioactivité",Y(1896),"sci","1895-1898","Röntgen, Becquerel, Curie."],
-["Premier vol motorisé",Y(1903),"sci","1903","Frères Wright."],
-["Relativité restreinte",Y(1905),"sci","1905","Einstein."],
-["Première Guerre mondiale",Y(1914),"pol","1914-1918","~10 millions de morts militaires."],
-["Révolution russe",Y(1917),"pol","1917","Naissance de l'URSS (1922)."],
-["Grippe espagnole",Y(1918),"terre","1918-1920","Pandémie mondiale."],
-["Krach de 1929",Y(1929),"pol","1929","Grande Dépression."],
-["Pénicilline",Y(1928),"sci","1928","Fleming."],
-["Seconde Guerre mondiale",Y(1939),"pol","1939-1945","~70 millions de morts."],
-["Hiroshima / Nagasaki",Y(1945),"pol","1945","Premières bombes atomiques."],
-["ONU",Y(1945),"pol","1945","Fondation de l'ONU."],
-["ADN (double hélice)",Y(1953),"sci","1953","Watson, Crick, Franklin."],
-["Spoutnik",Y(1957),"sci","1957","Début de l'ère spatiale."],
-["Gagarine dans l'espace",Y(1961),"sci","1961","Premier humain dans l'espace."],
-["Traité de Rome / CEE",Y(1957),"pol","1957","Origine de l'Union européenne."],
-["Premiers pas sur la Lune",Y(1969),"sci","1969","Apollo 11."],
-["Internet (ARPANET)",Y(1969),"sci","1969","Ancêtre d'Internet."],
-["Mai 68",Y(1968),"pol","1968","Mouvements sociaux en France."],
-["Microprocesseur",Y(1971),"sci","1971","Intel 4004."],
-["Chute du mur de Berlin",Y(1989),"pol","1989","Fin de la guerre froide."],
-["World Wide Web",Y(1991),"sci","1989-1991","Tim Berners-Lee ; fin de l'URSS en 1991."],
-["Euro",Y(2002),"pol","1999/2002","Monnaie européenne."],
-["11 septembre 2001",Y(2001),"pol","2001","Attentats aux États-Unis."],
-["Génome humain séquencé",Y(2003),"sci","2003","Projet terminé."],
-["iPhone",Y(2007),"sci","2007","Ère du smartphone."],
-["Crise financière",Y(2008),"pol","2008","Crise mondiale."],
-["Accord de Paris",Y(2015),"pol","2015","COP21, climat."],
-["COVID-19",Y(2020),"terre","2020","Pandémie mondiale."],
-["IA générative grand public",Y(2022),"sci","2022","ChatGPT et modèles génératifs."]
-];
+/* Événements chargés depuis events.json au démarrage. */
+let eventsData=[];
 
 /* ===== Rendu ===== */
 const view=document.getElementById('view'),tl=document.getElementById('tl'),mini=document.getElementById('mini'),win=document.getElementById('win'),axis=document.getElementById('axis');
@@ -323,26 +148,26 @@ function render(){
   const t=document.createElement('div');t.className='tick';t.style.left=pos(bp)+'px';t.textContent=fmt(bp);axis.appendChild(t);
  });
  // Événements
- const evs=E.filter(e=>active.has(e[2])).sort((a,b)=>b[1]-a[1]);
+ const evs=eventsData.filter(e=>active.has(e.cat)).sort((a,b)=>b.bp-a.bp);
  const lastEnd=[];const base=190,H=view.clientHeight||500;
  const lanes=Math.max(4,Math.floor((H-base-20)/22));
  evs.forEach(e=>{
-  const x=pos(e[1]);
-  const w=e[0].length*6.5+14;
+  const x=pos(e.bp);
+  const w=e.name.length*6.5+14;
   let lane=0;
   while(lane<lanes && lastEnd[lane]>x-2)lane++;
   if(lane>=lanes)lane=lanes-1;
   lastEnd[lane]=x+w;
-  const d=document.createElement('div');d.className='ev';d.style.left=x+'px';d.style.setProperty('--c',CAT[e[2]][1]);
+  const d=document.createElement('div');d.className='ev';d.style.left=x+'px';d.style.setProperty('--c',CAT[e.cat][1]);
   const top=base+lane*22;
-  d.innerHTML='<div class="stem" style="top:'+(base-8)+'px;height:'+(lane*22+8)+'px"></div><div class="dot" style="top:'+(base-14)+'px"></div><div class="lbl" style="top:'+top+'px">'+e[0]+'</div>';
+  d.innerHTML='<div class="stem" style="top:'+(base-8)+'px;height:'+(lane*22+8)+'px"></div><div class="dot" style="top:'+(base-14)+'px"></div><div class="lbl" style="top:'+top+'px">'+e.name+'</div>';
   d.onclick=()=>show(e);d._e=e;
   tl.appendChild(d);
  });
  drawMini();updWin();
 }
 function show(e){
- pc.textContent=CAT[e[2]][0];pt.textContent=e[0];pd.textContent=e[3];pp.textContent=e[4];panel.style.display='block';
+ pc.textContent=CAT[e.cat][0];pt.textContent=e.name;pd.textContent=e.date;pp.textContent=e.desc;panel.style.display='block';
 }
 function drawMini(){
  mini.querySelectorAll('.m,.e').forEach(n=>n.remove());
@@ -352,7 +177,7 @@ function drawMini(){
   const f=v=>pos(v)/zoom/TOTAL*W;
   d.style.left=f(a)+'px';d.style.width=Math.max(2,f(b)-f(a))+'px';d.style.background=c;mini.appendChild(d);
  });
- E.forEach(e=>{const d=document.createElement('div');d.className='e';d.style.left=(pos(e[1])/zoom/TOTAL*mini.clientWidth)+'px';mini.appendChild(d)});
+ eventsData.forEach(e=>{const d=document.createElement('div');d.className='e';d.style.left=(pos(e.bp)/zoom/TOTAL*mini.clientWidth)+'px';mini.appendChild(d)});
 }
 function updWin(){
  const W=mini.clientWidth,tot=tl.scrollWidth||1;
@@ -400,14 +225,29 @@ Object.entries(CAT).forEach(([k,[n,c]])=>{
 q.addEventListener('input',()=>{
  const s=q.value.trim().toLowerCase();let first=null;
  tl.querySelectorAll('.ev').forEach(d=>{
-  const hit=s&&(d._e[0].toLowerCase().includes(s)||d._e[4].toLowerCase().includes(s));
+  const hit=s&&(d._e.name.toLowerCase().includes(s)||d._e.desc.toLowerCase().includes(s));
   d.classList.toggle('hl',!!hit);if(hit&&!first)first=d;
  });
  if(first)view.scrollTo({left:parseFloat(first.style.left)-200,behavior:'smooth'});
 });
 window.addEventListener('resize',render);
-render();
-view.scrollLeft=0;
+async function init(){
+ try{
+  const response=await fetch('events.json');
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const data=await response.json();
+  if(!Array.isArray(data) || data.some(e=>!e || typeof e.name!=='string' || typeof e.bp!=='number' || typeof e.cat!=='string' || typeof e.date!=='string' || typeof e.desc!=='string'))throw new Error('Format JSON inattendu');
+  eventsData=data;
+  render();
+  view.scrollLeft=0;
+ }catch(error){
+  const box=document.getElementById('loadError');
+  box.textContent='Impossible de charger les événements. Ouvrez cette page depuis un serveur web local ou en ligne (pas en file://), puis réessayez. '+error.message;
+  box.style.display='block';
+  console.error('Chargement des événements impossible:',error);
+ }
+}
+init();
 </script>
 </body>
 </html>
