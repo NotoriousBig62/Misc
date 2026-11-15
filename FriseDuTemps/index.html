@@ -218,8 +218,7 @@ window.addEventListener('keydown',e=>{
 // Filtres
 Object.entries(CAT).forEach(([k,[n,c]])=>{
  const b=document.createElement('button');b.textContent=n;b.style.borderColor=c;
- b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('off');render()};
- filters.appendChild(b);
+ b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('off');render()};filters.appendChild(b);
 });
 // Recherche
 q.addEventListener('input',()=>{
