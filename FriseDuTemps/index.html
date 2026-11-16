@@ -309,7 +309,13 @@ async function init(){
 }
 init();
 </script>
-<!-- Version affichée : SHA du commit précédent ; le fichier ne peut pas contenir le hash de son propre commit. -->
-<span style="position:fixed;right:8px;bottom:6px;font-size:10px;color:#888;opacity:.65;pointer-events:none;">v cb0cefe</span>
+<span id="ver" style="position:fixed;right:8px;bottom:6px;font-size:10px;color:#888;opacity:.65;pointer-events:none;">v …</span>
+<script>
+/* Version affichée : SHA court du dernier commit de la branche Elec touchant FriseDuTemps, lu via l'API GitHub (un fichier ne peut pas contenir le hash de son propre commit). */
+fetch('https://api.github.com/repos/NotoriousBig62/Misc/commits?sha=Elec&path=FriseDuTemps&per_page=1')
+ .then(r=>r.ok?r.json():Promise.reject(r.status))
+ .then(c=>{document.getElementById('ver').textContent='v '+c[0].sha.slice(0,7)})
+ .catch(()=>{document.getElementById('ver').textContent='v ?'});
+</script>
 </body>
 </html>
