@@ -39,6 +39,9 @@ input{cursor:text;width:170px}
 #panel .c{font-size:11px;color:var(--mut);margin-bottom:6px}
 #panel p{margin:0;font-size:13px;line-height:1.45}
 #panel .x{position:absolute;top:6px;right:8px}
+#imgTip{position:fixed;display:none;width:max-content;max-width:min(260px,calc(100vw - 24px));padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px #000a;z-index:40;pointer-events:none}
+#imgTip img{display:block;max-width:100%;max-height:190px;object-fit:contain;border-radius:4px}
+#imgTip .caption{margin-top:5px;font-size:11px;line-height:1.3;color:var(--txt);white-space:normal}
 </style>
 </head>
 <body>
@@ -54,6 +57,7 @@ input{cursor:text;width:170px}
 <div id="mini"><div id="win"></div></div>
 <div id="panel"><button class="x" onclick="panel.style.display='none'">✕</button><div class="c" id="pc"></div><h2 id="pt"></h2><div class="d" id="pd"></div><p id="pp"></p></div>
 <div id="loadError" role="alert" style="display:none;position:fixed;inset:12px 12px auto;background:#7b2525;color:#fff;padding:12px;border-radius:8px;z-index:30"></div>
+<div id="imgTip" aria-hidden="true"><img alt=""><div class="caption"></div></div>
 
 <script>
 /* Dates en "années avant aujourd'hui (BP)" ; l'an 2026 = 0.
@@ -134,6 +138,28 @@ let eventsData=[];
 /* ===== Rendu ===== */
 const view=document.getElementById('view'),tl=document.getElementById('tl'),mini=document.getElementById('mini'),win=document.getElementById('win'),axis=document.getElementById('axis');
 const panel=document.getElementById('panel');
+const imgTip=document.getElementById('imgTip'),imgTipImg=imgTip.querySelector('img'),imgTipCaption=imgTip.querySelector('.caption');
+let tipTarget=null,tipReady=false,tipRequest=0,tipX=0,tipY=0;
+function hideImgTip(){tipRequest++;tipTarget=null;tipReady=false;imgTip.style.display='none';}
+function positionImgTip(){
+ if(!tipReady)return;
+ const margin=12,offset=14,r=imgTip.getBoundingClientRect();
+ const left=Math.max(margin,Math.min(tipX+offset,window.innerWidth-r.width-margin));
+ const top=Math.max(margin,Math.min(tipY+offset,window.innerHeight-r.height-margin));
+ imgTip.style.left=left+'px';imgTip.style.top=top+'px';
+}
+function bindImgTip(node,entry){
+ if(!entry||!entry.img)return;
+ node.addEventListener('mouseenter',e=>{
+  hideImgTip();tipTarget=node;const request=tipRequest;tipX=e.clientX;tipY=e.clientY;
+  imgTipCaption.textContent=entry.name;imgTipImg.alt=entry.name;
+  imgTipImg.onload=()=>{if(tipTarget!==node||tipRequest!==request)return;tipReady=true;imgTip.style.display='block';positionImgTip();};
+  imgTipImg.onerror=()=>{if(tipTarget===node&&tipRequest===request)hideImgTip();};
+  imgTipImg.src=entry.img;
+ });
+ node.addEventListener('mousemove',e=>{if(tipTarget!==node)return;tipX=e.clientX;tipY=e.clientY;positionImgTip();});
+ node.addEventListener('mouseleave',()=>{if(tipTarget===node)hideImgTip();});
+}
 const active=new Set(Object.keys(CAT));
 
 function fmt(bp){
@@ -143,6 +169,7 @@ function fmt(bp){
  const y=NOW-bp; return y<=0?(-y+' av. J.-C.'):String(Math.round(y));
 }
 function render(){
+ hideImgTip();
  tl.style.width=TOTAL*zoom+'px';
  tl.querySelectorAll('.seg,.ev,.tick').forEach(n=>n.remove());
  // Segments
@@ -153,6 +180,7 @@ function render(){
   if(l==1)d.style.top='70px';
   const x1=pos(a),x2=pos(b);
   d.style.left=x1+'px';d.style.width=Math.max(2,x2-x1)+'px';d.style.background=c;d.textContent=n;d.title=n+' ('+fmt(a)+' → '+fmt(b)+')';
+  bindImgTip(d,eventsData.find(e=>e.name===n&&e.img));
   tl.appendChild(d);
  });
  // Graduations
@@ -188,6 +216,7 @@ function render(){
   const top=base+lane*22;
   d.innerHTML='<div class="stem" style="top:'+(base-8)+'px;height:'+(lane*22+8)+'px"></div><div class="dot" style="top:'+(base-14)+'px"></div><div class="lbl" style="top:'+top+'px">'+e.name+'</div>';
   d.onclick=()=>show(e);d._e=e;
+  bindImgTip(d,e);
   tl.appendChild(d);
  });
  drawMini();updWin();
