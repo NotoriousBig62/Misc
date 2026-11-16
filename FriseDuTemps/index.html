@@ -18,7 +18,8 @@ input{cursor:text;width:170px}
 #view{flex:1;position:relative;overflow-x:scroll;overflow-y:hidden;cursor:grab}
 #view.drag{cursor:grabbing}
 #tl{position:relative;height:100%}
-.seg{position:absolute;top:70px;height:34px;line-height:34px;font-size:12px;padding:0 6px;white-space:nowrap;overflow:hidden;border-right:1px solid #0008;color:#fff;font-weight:600;cursor:pointer;user-select:none}
+.seg{position:absolute;top:70px;height:34px;line-height:34px;font-size:12px;padding:0 6px;white-space:nowrap;overflow:visible;border-right:1px solid #0008;color:#fff;font-weight:600;cursor:pointer;user-select:none}
+.seg .segLabel{position:sticky;left:0;display:block;width:100%;height:100%;overflow:hidden;white-space:nowrap}
 .row2{top:106px;height:26px;line-height:26px;font-size:11px;opacity:.85}
 .row3{top:134px;height:24px;line-height:24px;font-size:11px;opacity:.7}
 #axis{position:absolute;top:40px;left:0;right:0;height:26px}
@@ -137,7 +138,7 @@ const active=new Set(Object.keys(CAT));
 function fmt(bp){if(bp>=1e9)return (bp/1e9).toFixed(1).replace('.',',').replace(/,0$/,'')+' Ga';if(bp>=1e6)return Math.round(bp/1e6)+' Ma';if(bp>=1e4)return Math.round(bp).toLocaleString('fr-FR').replace(/\u202f/g,' ')+' a';const y=Math.round(NOW-bp);return y<=0?(Math.abs(y)+' av. J.-C.'):String(y);}
 function render(){
  hideImgTip();tl.style.width=TOTAL*zoom+'px';tl.querySelectorAll('.seg,.ev,.tick').forEach(n=>n.remove());
- const all=P.concat(P2);all.forEach(([n,a,b,c,l])=>{const d=document.createElement('div');d.className='seg'+(l==2?' row2':l==3?' row3':'');if(l==1)d.style.top='70px';const x1=pos(a),x2=pos(b);d.style.left=x1+'px';d.style.width=Math.max(2,x2-x1)+'px';d.style.background=c;d.textContent=n;d.title=n+' ('+fmt(a)+' → '+fmt(b)+')';const info=periodInfo.find(e=>e.name===n);bindImgTip(d,info);d._period={name:n,start:a,end:b,color:c,info};d.addEventListener('click',()=>{if(draggedView){draggedView=false;return;}showPeriod(d._period);});tl.appendChild(d);});
+ const all=P.concat(P2);all.forEach(([n,a,b,c,l])=>{const d=document.createElement('div');d.className='seg'+(l==2?' row2':l==3?' row3':'');if(l==1)d.style.top='70px';const x1=pos(a),x2=pos(b);d.style.left=x1+'px';d.style.width=Math.max(2,x2-x1)+'px';d.style.background=c;const label=document.createElement('span');label.className='segLabel';label.textContent=n;d.appendChild(label);d.title=n+' ('+fmt(a)+' → '+fmt(b)+')';const info=periodInfo.find(e=>e.name===n);bindImgTip(d,info);d._period={name:n,start:a,end:b,color:c,info};d.addEventListener('click',()=>{if(draggedView){draggedView=false;return;}showPeriod(d._period);});tl.appendChild(d);});
  const ticks=[];if(linearScale&&!focusOverride){const raw=START/Math.max(4,Math.min(1000,Math.round(TOTAL*zoom/160)));const pow=10**Math.floor(Math.log10(raw)),ratio=raw/pow;const step=(ratio<=1?1:ratio<=2?2:ratio<=5?5:10)*pow;for(let bp=START;bp>0;bp-=step)ticks.push(bp);ticks.push(0);}else{SCALE.forEach(([a,b,w])=>{const n=Math.max(4,Math.round(w*zoom/160));for(let i=0;i<n;i++)ticks.push(a-(a-b)*i/n);});ticks.push(0);}
  ticks.forEach(bp=>{const t=document.createElement('div');t.className='tick';t.style.left=pos(bp)+'px';t.textContent=fmt(bp);axis.appendChild(t);});
  const evs=eventsData.filter(e=>e.type!=='period'&&active.has(e.cat)).sort((a,b)=>b.bp-a.bp);const lastEnd=[];const base=190,H=view.clientHeight||500;const lanes=Math.max(4,Math.floor((H-base-20)/22));
