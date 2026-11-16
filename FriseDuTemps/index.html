@@ -19,10 +19,10 @@ input{cursor:text;width:170px}
 #view.drag{cursor:grabbing}
 #tl{position:relative;height:100%}
 .seg{position:absolute;top:70px;height:34px;line-height:34px;font-size:12px;padding:0 6px;white-space:nowrap;overflow:visible;border-right:1px solid #0008;color:#fff;font-weight:600;cursor:pointer;user-select:none}
-.seg .segLabel{position:sticky;left:0;display:block;width:max-content;max-width:calc(100vw - 24px);height:100%;overflow:hidden;white-space:nowrap}
+.seg .segLabel{position:sticky;left:0;display:block;width:100%;height:100%;overflow:hidden;white-space:nowrap}
 .row2{top:106px;height:26px;line-height:26px;font-size:11px;opacity:.85}
 .row3{top:134px;height:24px;line-height:24px;font-size:11px;opacity:.7}
-.row4{top:158px;height:24px;line-height:24px;font-size:11px;opacity:.7}
+.row4{top:160px;height:22px;line-height:22px;font-size:11px;opacity:.7}
 #axis{position:absolute;top:40px;left:0;right:0;height:26px}
 .tick{position:absolute;top:0;font-size:10px;color:var(--mut);border-left:1px solid var(--line);padding-left:3px;height:20px}
 .ev{position:absolute;width:0}
@@ -72,14 +72,12 @@ const Ma=x=>x*1e6, Ga=x=>x*1e9, ka=x=>x*1e3;
 
 /* Échelle non linéaire par segments : [bp_debut(ancien), bp_fin(récent), largeur_px] */
 const SCALE=[
- [Ga(13.8),Ga(4.6),180],
- [Ga(4.6),Ga(4.0),180],
- [Ga(4.0),Ga(2.5),220],
- [Ga(2.5),Ma(541),320],
- [Ma(541),Ma(252),350],
- [Ma(252),Ma(66),350],
- [Ma(66),Ma(2.58),400],
- [Ma(2.58),Y(-3000),800],
+ [Ga(13.8),Ga(4.6),1100],
+ [Ga(4.6),Ga(0.541),1500],
+ [Ma(541),Ma(66),1500],
+ [Ma(66),Ma(2.58),1300],
+ [Ma(2.58),Ma(12e-3),1300],
+ [Ma(12e-3),Y(-3000),1300],
  [Y(-3000),Y(500),1400],
  [Y(500),Y(1500),1300],
  [Y(1500),Y(1800),1300],
@@ -118,7 +116,7 @@ const P=[
  ["Trias",Ma(252),Ma(201),"#7a4a8a",3],["Jurassique",Ma(201),Ma(145),"#3a8a9a",3],["Crétacé",Ma(145),Ma(66),"#6a9a3a",3],
  ["Paléogène",Ma(66),Ma(23),"#c0803a",3],["Néogène",Ma(23),Ma(2.58),"#d0a040",3],["Quaternaire",Ma(2.58),0,"#e0b050",3]
 ];
-/* Segments supplémentaires pour la partie récente (niveaux 2 & 3) */
+/* Segments supplémentaires pour la partie récente (niveaux 2, 3 & 4) */
 const P2=[
  ["Pléistocène",Ma(2.58),ka(11.7),"#4a7ab0",2],["Holocène",ka(11.7),0,"#4aa07a",2],
  ["Paléolithique",Ma(3.3),ka(12),"#9a5a3a",3],["Mésolithique",ka(12),ka(9),"#8a6a4a",3],["Néolithique",ka(9),Y(-3300),"#7a8a3a",3],
@@ -151,6 +149,27 @@ function render(){
 function show(e){pc.textContent=CAT[e.cat][0];pt.textContent=e.name;pd.textContent=e.date;pp.textContent=e.desc;panel.style.display='block';}
 function showPeriod(p){pc.textContent='Période historique';pt.textContent=p.name;pd.textContent=fmt(p.start)+' → '+fmt(p.end);pp.textContent=p.info?.desc||'';panel.style.display='block';zoomToPeriod(p);}
 function miniPos(bp){return pos(bp)/zoom;}
+function drawMini(){mini.querySelectorAll('.m,.e').forEach(n=>n.remove());const W=mini.clientWidth;P.filter(p=>p[4]==1).forEach(([n,a,b,c])=>{const d=document.createElement('div');d.className='m';const f=v=>miniPos(v)/TOTAL*W;d.style.left=f(a)+'px';d.style.width=Math.max(2,f(b)-f(a))+'px';d.style.background=c;mini.appendChild(d);});eventsData.forEach(e=>{const d=document.createElement('div');d.className='e';d.style.left=(miniPos(e.bp)/TOTAL*mini.clientWidth)+'px';mini.appendChild(d);});}
+function updWin(){const W=mini.clientWidth,tot=tl.scrollWidth||1;win.style.left=(view.scrollLeft/tot*W)+'px';win.style.width=(view.clientWidth/tot*W)+'px';}
+view.addEventListener('scroll',updWin);
+let miniDrag=null,suppressMiniClick=false;
+win.addEventListener('pointerdown',ev=>{if(ev.button!==undefined&&ev.button!==0)return;ev.preventDefault();const wr=win.getBoundingClientRect();miniDrag={id:ev.pointerId,offset:ev.clientX-wr.left,startX:ev.clientX,moved:false};win.classList.add('dragging');win.setPointerCapture(ev.pointerId);});
+win.addEventListener('pointermove',ev=>{if(!miniDrag||ev.pointerId!==miniDrag.id)return;ev.preventDefault();if(Math.abs(ev.clientX-miniDrag.startX)>1)miniDrag.moved=true;const mr=mini.getBoundingClientRect(),wr=win.getBoundingClientRect();const span=Math.max(0,mr.width-wr.width),maxScroll=Math.max(0,tl.scrollWidth-view.clientWidth);const left=Math.max(0,Math.min(span,ev.clientX-mr.left-miniDrag.offset));view.scrollLeft=span?left/span*maxScroll:0;});
+function endMiniDrag(ev){if(!miniDrag||ev.pointerId!==miniDrag.id)return;suppressMiniClick=miniDrag.moved;miniDrag=null;win.classList.remove('dragging');}
+win.addEventListener('pointerup',endMiniDrag);win.addEventListener('pointercancel',endMiniDrag);win.addEventListener('lostpointercapture',()=>{miniDrag=null;win.classList.remove('dragging');});
+mini.addEventListener('click',ev=>{if(suppressMiniClick){suppressMiniClick=false;ev.preventDefault();return;}const r=mini.getBoundingClientRect();const bp=bpAt((ev.clientX-r.left)/r.width*tl.scrollWidth);view.scrollLeft=pos(bp)-view.clientWidth/2;});
+function setZoom(z,cx){const rel=(view.scrollLeft+(cx??view.clientWidth/2))/zoom;zoom=Math.min(linearScale?2000:6,Math.max(0.3,z));render();view.scrollLeft=rel*zoom-(cx??view.clientWidth/2);}
+let zoomReturn=null,zoomAnim=0;const out=document.getElementById('out');
+function smoothZoom(targetZoom,targetBp,after){cancelAnimationFrame(zoomAnim);const from=zoom,to=Math.max(0.3,targetZoom),anchor=view.clientWidth/2,anchorBp=bpAt(view.scrollLeft+anchor),started=performance.now(),duration=360;function frame(now){const t=Math.min(1,(now-started)/duration),eased=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;zoom=from+(to-from)*eased;render();view.scrollLeft=pos(anchorBp)-anchor;if(t<1)zoomAnim=requestAnimationFrame(frame);else{view.scrollTo({left:pos(targetBp)-view.clientWidth/2,behavior:'smooth'});after?.();}}zoomAnim=requestAnimationFrame(frame);}
+function zoomToPeriod(p){if(!zoomReturn){zoomReturn={zoom,bp:bpAt(view.scrollLeft+view.clientWidth/2),linearScale};out.style.display='inline-block';}if(linearScale&&!focusOverride){focusOverride=true;render();}const width=Math.max(1,pos(p.end)-pos(p.start));const target=zoom*view.clientWidth/(width*.8);smoothZoom(target,(p.start+p.end)/2,()=>{const left=pos(p.start),right=pos(p.end),span=right-left;if(span>0)view.scrollTo({left:(left+right)/2-view.clientWidth/2,behavior:'smooth'});});}
+function zoomOut(){if(!zoomReturn)return;const old=zoomReturn;zoomReturn=null;out.style.display='none';smoothZoom(old.zoom,old.bp,()=>{focusOverride=false;linearScale=old.linearScale;document.getElementById('linearScale').checked=linearScale;render();view.scrollTo({left:pos(old.bp)-view.clientWidth/2,behavior:'smooth'});});}
+out.addEventListener('click',zoomOut);window.addEventListener('keydown',e=>{if(e.key==='Escape'&&zoomReturn)zoomOut();});
+document.getElementById('linearScale').addEventListener('change',e=>{const center=bpAt(view.scrollLeft+view.clientWidth/2);linearScale=e.target.checked;zoom=Math.min(zoom,linearScale?2000:6);render();view.scrollLeft=pos(center)-view.clientWidth/2;});
+zi.onclick=()=>setZoom(zoom*1.4);zo.onclick=()=>setZoom(zoom/1.4);
+view.addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();setZoom(zoom*(e.deltaY<0?1.15:1/1.15),e.clientX);}else{e.preventDefault();view.scrollLeft+=e.deltaY+e.deltaX;}},{passive:false});
+let dr=false,sx=0,sl=0,draggedView=false,dragMoved=false;view.addEventListener('mousedown',e=>{if(e.button!==0)return;dr=true;dragMoved=false;draggedView=false;sx=e.clientX;sl=view.scrollLeft;view.classList.add('drag');});window.addEventListener('mouseup',()=>{if(dr)draggedView=dragMoved;dr=false;view.classList.remove('drag');});window.addEventListener('mousemove',e=>{if(dr){if(Math.abs(e.clientX-sx)>4)dragMoved=true;view.scrollLeft=sl-(e.clientX-sx);}});
+window.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')view.scrollLeft+=200;if(e.key==='ArrowLeft')view.scrollLeft-=200;if(e.key==='+')setZoom(zoom*1.4);if(e.key==='-')setZoom(zoom/1.4);});
+[["Big Bang",Ga(13.8)],["Terre",Ga(4.5)],["Vie",Ga(3.8)],["Dinosaures",Ma(230)],["Humanité",Ma(3)],["Antiquité",Y(-3300)],["Moyen Âge",Y(476)],["Moderne",Y(1492)],["Aujourd'hui",0]].forEach(([n,bp])=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>{view.scrollTo({left:pos(bp)-80,behavior:'smooth'});};jump.appendChild(b);});
 Object.entries(CAT).forEach(([k,[n,c]])=>{const b=document.createElement('button');b.textContent=n;b.style.borderColor=c;b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('off');render();};filters.appendChild(b);});
 q.addEventListener('input',()=>{const s=q.value.trim().toLowerCase();let first=null;tl.querySelectorAll('.ev').forEach(d=>{const hit=s&&(d._e.name.toLowerCase().includes(s)||d._e.desc.toLowerCase().includes(s));d.classList.toggle('hl',!!hit);if(hit&&!first)first=d;});if(first)view.scrollTo({left:parseFloat(first.style.left)-200,behavior:'smooth'});});
 window.addEventListener('resize',render);
