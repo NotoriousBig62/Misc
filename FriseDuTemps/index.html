@@ -40,6 +40,7 @@ input{cursor:text;width:170px}
 #panel p{margin:0;font-size:13px;line-height:1.45}
 #panel .x{position:absolute;top:6px;right:8px}
 #imgTip{position:fixed;display:none;width:max-content;max-width:min(260px,calc(100vw - 24px));padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px #000a;z-index:40;pointer-events:none}
+#imgTip .imageArea{min-width:180px;min-height:54px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11px}
 #imgTip img{display:block;max-width:100%;max-height:190px;object-fit:contain;border-radius:4px}
 #imgTip .caption{margin-top:5px;font-size:11px;line-height:1.3;color:var(--txt);white-space:normal}
 </style>
@@ -57,7 +58,7 @@ input{cursor:text;width:170px}
 <div id="mini"><div id="win"></div></div>
 <div id="panel"><button class="x" onclick="panel.style.display='none'">✕</button><div class="c" id="pc"></div><h2 id="pt"></h2><div class="d" id="pd"></div><p id="pp"></p></div>
 <div id="loadError" role="alert" style="display:none;position:fixed;inset:12px 12px auto;background:#7b2525;color:#fff;padding:12px;border-radius:8px;z-index:30"></div>
-<div id="imgTip" aria-hidden="true"><img alt=""><div class="caption"></div></div>
+<div id="imgTip" aria-hidden="true"><div class="imageArea">Chargement…</div><div class="caption"></div></div>
 
 <script>
 /* Dates en "années avant aujourd'hui (BP)" ; l'an 2026 = 0.
@@ -138,11 +139,10 @@ let eventsData=[];
 /* ===== Rendu ===== */
 const view=document.getElementById('view'),tl=document.getElementById('tl'),mini=document.getElementById('mini'),win=document.getElementById('win'),axis=document.getElementById('axis');
 const panel=document.getElementById('panel');
-const imgTip=document.getElementById('imgTip'),imgTipImg=imgTip.querySelector('img'),imgTipCaption=imgTip.querySelector('.caption');
-let tipTarget=null,tipReady=false,tipRequest=0,tipX=0,tipY=0;
-function hideImgTip(){tipRequest++;tipTarget=null;tipReady=false;imgTip.style.display='none';}
+const imgTip=document.getElementById('imgTip'),imgTipArea=imgTip.querySelector('.imageArea'),imgTipCaption=imgTip.querySelector('.caption');
+let tipTarget=null,tipRequest=0,tipX=0,tipY=0;
+function hideImgTip(){tipRequest++;tipTarget=null;imgTip.style.display='none';}
 function positionImgTip(){
- if(!tipReady)return;
  const margin=12,offset=14,r=imgTip.getBoundingClientRect();
  const left=Math.max(margin,Math.min(tipX+offset,window.innerWidth-r.width-margin));
  const top=Math.max(margin,Math.min(tipY+offset,window.innerHeight-r.height-margin));
@@ -152,10 +152,12 @@ function bindImgTip(node,entry){
  if(!entry||!entry.img)return;
  node.addEventListener('mouseenter',e=>{
   hideImgTip();tipTarget=node;const request=tipRequest;tipX=e.clientX;tipY=e.clientY;
-  imgTipCaption.textContent=entry.name;imgTipImg.alt=entry.name;
-  imgTipImg.onload=()=>{if(tipTarget!==node||tipRequest!==request)return;tipReady=true;imgTip.style.display='block';positionImgTip();};
-  imgTipImg.onerror=()=>{if(tipTarget===node&&tipRequest===request)hideImgTip();};
-  imgTipImg.src=entry.img;
+  imgTipCaption.textContent=entry.name;imgTipArea.textContent='Chargement…';
+  imgTip.style.display='block';positionImgTip();
+  const image=new Image();image.alt=entry.name;
+  image.onload=()=>{if(tipTarget!==node||tipRequest!==request)return;imgTipArea.replaceChildren(image);positionImgTip();};
+  image.onerror=()=>{if(tipTarget!==node||tipRequest!==request)return;imgTipArea.textContent='Image indisponible';positionImgTip();};
+  image.src=entry.img;
  });
  node.addEventListener('mousemove',e=>{if(tipTarget!==node)return;tipX=e.clientX;tipY=e.clientY;positionImgTip();});
  node.addEventListener('mouseleave',()=>{if(tipTarget===node)hideImgTip();});
@@ -163,10 +165,10 @@ function bindImgTip(node,entry){
 const active=new Set(Object.keys(CAT));
 
 function fmt(bp){
- if(bp>=1e9)return (bp/1e9).toFixed(1).replace('.',',')+' Ga';
+ if(bp>=1e9)return (bp/1e9).toFixed(1).replace('.',',').replace(/,0$/,'')+' Ga';
  if(bp>=1e6)return Math.round(bp/1e6)+' Ma';
- if(bp>=1e4)return Math.round(bp/1e3)+' ka';
- const y=NOW-bp; return y<=0?(-y+' av. J.-C.'):String(Math.round(y));
+ if(bp>=1e4)return Math.round(bp).toLocaleString('fr-FR').replace(/\u202f/g,' ')+' a';
+ const y=Math.round(NOW-bp); return y<=0?(Math.abs(y)+' av. J.-C.'):String(y);
 }
 function render(){
  hideImgTip();
