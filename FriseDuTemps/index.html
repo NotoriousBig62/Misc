@@ -29,10 +29,11 @@ input{cursor:text;width:170px}
 .ev .lbl{position:absolute;left:4px;font-size:11px;white-space:nowrap;cursor:pointer;background:#0009;padding:1px 4px;border-radius:3px;border-left:2px solid var(--c)}
 .ev.hl .dot{box-shadow:0 0 0 4px #ffd54a}
 .ev:hover{z-index:5}
-#mini{height:46px;background:var(--panel);border-top:1px solid var(--line);position:relative;cursor:pointer}
+#mini{height:46px;background:var(--panel);border-top:1px solid var(--line);position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
 #mini .m{position:absolute;top:4px;height:8px}
 #mini .e{position:absolute;top:18px;width:2px;height:10px;background:#fff8}
-#win{position:absolute;top:0;bottom:0;border:2px solid #ffd54a;background:#ffd54a22;pointer-events:none}
+#win{position:absolute;top:0;bottom:0;border:2px solid #ffd54a;background:#ffd54a22;pointer-events:auto;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+#win.dragging{cursor:grabbing}
 #panel{position:fixed;right:12px;bottom:60px;width:340px;max-width:90vw;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:none;box-shadow:0 8px 30px #0009;z-index:20}
 #panel h2{margin:0 0 4px;font-size:17px}
 #panel .d{color:#ffd54a;font-size:13px;margin-bottom:8px}
@@ -90,129 +91,50 @@ function pos(bp){
   return (START-bp)/START*TOTAL*zoom;
  }
  let x=0;
- for(const [a,b,w] of SCALE){
-  if(bp<=a && bp>=b){return (x+(a-bp)/(a-b)*w)*zoom}
-  x+=w;
- }
- return bp>SCALE[0][0]?0:TOTAL*zoom;
+ for(const [a,b,w] of SCALE){if(bp<=a&&bp>=b)return (x+(a-bp)/(a-b)*w)*zoom;x+=w;}
+ return bp>START?0:TOTAL*zoom;
 }
 function bpAt(px){
  const x=px/zoom;
- if(linearScale)return START*(1-Math.max(0,Math.min(TOTAL,x))/TOTAL);
- if(x<=0)return START;
- let offset=0;
- for(const [a,b,w] of SCALE){
-  if(x<=offset+w)return a-(x-offset)/w*(a-b);
-  offset+=w;
- }
+ if(linearScale)return START*(1-x/TOTAL);
+ let acc=0;
+ for(const [a,b,w] of SCALE){if(x<=acc+w)return a-(x-acc)/w*(a-b);acc+=w;}
  return 0;
 }
-
-/* Périodes : [nom, début bp, fin bp, couleur, niveau(1,2,3)] */
-const P=[
- // Niveau 1 : éons
- ["Hadéen",Ga(4.6),Ga(4.0),"#8d3b2f",1],["Archéen",Ga(4.0),Ga(2.5),"#9c5a2a",1],["Protérozoïque",Ga(2.5),Ma(541),"#7a6a2a",1],["Phanérozoïque",Ma(541),0,"#2a7a4a",1],
- // Niveau 2 : ères / grandes périodes historiques
- ["Paléozoïque",Ma(541),Ma(252),"#3a7ab0",2],["Mésozoïque",Ma(252),Ma(66),"#3aa07a",2],["Cénozoïque",Ma(66),0,"#c0903a",2],
- // Niveau 3 : périodes
- ["Cambrien",Ma(541),Ma(485),"#4a8a6a",3],["Ordovicien",Ma(485),Ma(444),"#4a7a8a",3],["Silurien",Ma(444),Ma(419),"#5a8a9a",3],["Dévonien",Ma(419),Ma(359),"#9a7a4a",3],["Carbonifère",Ma(359),Ma(299),"#5a6a5a",3],["Permien",Ma(299),Ma(252),"#a05a4a",3],
- ["Trias",Ma(252),Ma(201),"#7a4a8a",3],["Jurassique",Ma(201),Ma(145),"#3a8a9a",3],["Crétacé",Ma(145),Ma(66),"#6a9a3a",3],
- ["Paléogène",Ma(66),Ma(23),"#c0803a",3],["Néogène",Ma(23),Ma(2.58),"#d0a040",3],["Quaternaire",Ma(2.58),0,"#e0b050",3]
-];
-/* Segments supplémentaires pour la partie récente (niveaux 2 & 3) */
-const P2=[
- ["Pléistocène",Ma(2.58),ka(11.7),"#4a7ab0",2],["Holocène",ka(11.7),0,"#4aa07a",2],
- ["Paléolithique",Ma(3.3),ka(12),"#9a5a3a",3],["Mésolithique",ka(12),ka(9),"#8a6a4a",3],["Néolithique",ka(9),Y(-3300),"#7a8a3a",3],
- ["Âge du bronze",Y(-3300),Y(-1200),"#b0703a",3],["Âge du fer",Y(-1200),Y(-800),"#707a8a",3],
- ["Antiquité",Y(-3300),Y(476),"#a0703a",2],["Moyen Âge",Y(476),Y(1492),"#6a5a9a",2],["Renaissance",Y(1492),Y(1620),"#c05a7a",3],
- ["Temps modernes",Y(1492),Y(1789),"#3a8a9a",2],["Époque contemporaine",Y(1789),0,"#c04a4a",2],
- ["Haut Moyen Âge",Y(476),Y(1000),"#7a6aaa",3],["Bas Moyen Âge",Y(1000),Y(1492),"#8a7aba",3],
- ["Révolutions industrielles",Y(1760),Y(1914),"#5a7a9a",3],["XXe siècle",Y(1900),Y(2000),"#aa4a6a",3],["XXIe siècle",Y(2000),0,"#4aaa9a",3]
-];
-
-/* Catégories */
-const CAT={cosmos:["Cosmos","#b388ff"],terre:["Terre","#ff8a65"],vie:["Vie","#66bb6a"],humain:["Humanité","#ffca28"],civ:["Civilisations","#42a5f5"],pol:["Politique/Guerre","#ef5350"],sci:["Sciences/Tech","#26c6da"],art:["Arts/Religion","#ec407a"]};
-
-/* Événements chargés depuis events.json au démarrage. */
+const CAT={
+ geo:['Géologie','#4fc3f7'],
+ vie:['Vie','#81c784'],
+ humain:['Humanité','#ffb74d'],
+ histoire:['Histoire','#e57373'],
+ science:['Sciences','#ba68c8'],
+ culture:['Culture','#fff176'],
+ tech:['Technologie','#90a4ae']
+};
 let eventsData=[];
-
-/* ===== Rendu ===== */
+const P=[
+ ['Big Bang',Ga(13.8),Ga(13.8), '#9575cd',1],
+ ['Formation de la Terre',Ga(4.54),Ga(4.54),'#4fc3f7',1],
+ ['Apparition de la vie',Ga(3.8),Ga(3.8),'#81c784',1],
+ ['Présent',0,0,'#ffd54a',1]
+];
 const view=document.getElementById('view'),tl=document.getElementById('tl'),mini=document.getElementById('mini'),win=document.getElementById('win'),axis=document.getElementById('axis');
-const panel=document.getElementById('panel');
-const imgTip=document.getElementById('imgTip'),imgTipArea=imgTip.querySelector('.imageArea'),imgTipCaption=imgTip.querySelector('.caption');
-let tipTarget=null,tipRequest=0,tipX=0,tipY=0;
-function hideImgTip(){tipRequest++;tipTarget=null;imgTip.style.display='none';}
-function positionImgTip(){
- const margin=12,offset=14,r=imgTip.getBoundingClientRect();
- const left=Math.max(margin,Math.min(tipX+offset,window.innerWidth-r.width-margin));
- const top=Math.max(margin,Math.min(tipY+offset,window.innerHeight-r.height-margin));
- imgTip.style.left=left+'px';imgTip.style.top=top+'px';
-}
-function bindImgTip(node,entry){
- if(!entry||!entry.img)return;
- node.addEventListener('mouseenter',e=>{
-  hideImgTip();tipTarget=node;const request=tipRequest;tipX=e.clientX;tipY=e.clientY;
-  imgTipCaption.textContent=entry.name;imgTipArea.textContent='Chargement…';
-  imgTip.style.display='block';positionImgTip();
-  const image=new Image();image.alt=entry.name;
-  image.onload=()=>{if(tipTarget!==node||tipRequest!==request)return;imgTipArea.replaceChildren(image);positionImgTip();};
-  image.onerror=()=>{if(tipTarget!==node||tipRequest!==request)return;imgTipArea.textContent='Image indisponible';positionImgTip();};
-  image.src=entry.img;
- });
- node.addEventListener('mousemove',e=>{if(tipTarget!==node)return;tipX=e.clientX;tipY=e.clientY;positionImgTip();});
- node.addEventListener('mouseleave',()=>{if(tipTarget===node)hideImgTip();});
-}
-const active=new Set(Object.keys(CAT));
-
-function fmt(bp){
- if(bp>=1e9)return (bp/1e9).toFixed(1).replace('.',',').replace(/,0$/,'')+' Ga';
- if(bp>=1e6)return Math.round(bp/1e6)+' Ma';
- if(bp>=1e4)return Math.round(bp).toLocaleString('fr-FR').replace(/\u202f/g,' ')+' a';
- const y=Math.round(NOW-bp); return y<=0?(Math.abs(y)+' av. J.-C.'):String(y);
-}
+function fDate(bp){if(bp>=1e9)return (bp/1e9).toFixed(2)+' Ga';if(bp>=1e6)return (bp/1e6).toFixed(1)+' Ma';if(bp>=1e3)return (bp/1e3).toFixed(0)+' ka';return bp===0?'Aujourd’hui':Math.round(bp)+' av. J.-C.'}
 function render(){
- hideImgTip();
- tl.style.width=TOTAL*zoom+'px';
- tl.querySelectorAll('.seg,.ev,.tick').forEach(n=>n.remove());
- // Segments
- const all=P.concat(P2);
- all.forEach(([n,a,b,c,l])=>{
-  const d=document.createElement('div');
-  d.className='seg'+(l==2?' row2':l==3?' row3':'');
-  if(l==1)d.style.top='70px';
-  const x1=pos(a),x2=pos(b);
-  d.style.left=x1+'px';d.style.width=Math.max(2,x2-x1)+'px';d.style.background=c;d.textContent=n;d.title=n+' ('+fmt(a)+' → '+fmt(b)+')';
-  bindImgTip(d,eventsData.find(e=>e.name===n&&e.img));
-  tl.appendChild(d);
+ const W=TOTAL*zoom;
+ tl.style.width=W+'px';
+ axis.innerHTML='';
+ const ticks=[Ga(13.8),Ga(10),Ga(5),Ga(4.6),Ga(1),Ma(541),Ma(100),Ma(66),Ma(2.58),ka(12),Y(-3000),Y(0),Y(500),Y(1000),Y(1500),Y(1800),0];
+ for(const bp of ticks){const d=document.createElement('div');d.className='tick';d.style.left=pos(bp)+'px';d.textContent=fDate(bp);axis.appendChild(d)}
+ tl.querySelectorAll('.seg,.ev').forEach(n=>n.remove());
+ SCALE.forEach(([a,b,w],i)=>{
+  const d=document.createElement('div');d.className='seg';d.style.left=(SCALE.slice(0,i).reduce((s,x)=>s+x[2],0)*zoom)+'px';d.style.width=(w*zoom)+'px';d.style.background=['#263238','#37474f','#1565c0','#00838f','#558b2f','#6d4c41','#8e24aa','#3949ab','#c62828','#ef6c00'][i];d.textContent=['Univers ancien','Formation système solaire','Paléozoïque','Mésozoïque','Cénozoïque','Préhistoire','Antiquité','Moyen Âge','Époque moderne','Époque contemporaine'][i];tl.appendChild(d);
  });
- // Graduations
- const ticks=[];
- if(linearScale){
-  const raw=START/Math.max(4,Math.min(1000,Math.round(TOTAL*zoom/160)));
-  const pow=10**Math.floor(Math.log10(raw)),ratio=raw/pow;
-  const step=(ratio<=1?1:ratio<=2?2:ratio<=5?5:10)*pow;
-  for(let bp=START;bp>0;bp-=step)ticks.push(bp);
-  ticks.push(0);
- }else{
-  SCALE.forEach(([a,b,w])=>{
-   const n=Math.max(4,Math.round(w*zoom/160));
-   for(let i=0;i<n;i++){ticks.push(a-(a-b)*i/n)}
-  });
-  ticks.push(0);
- }
- ticks.forEach(bp=>{
-  const t=document.createElement('div');t.className='tick';t.style.left=pos(bp)+'px';t.textContent=fmt(bp);axis.appendChild(t);
- });
- // Événements
- const evs=eventsData.filter(e=>active.has(e.cat)).sort((a,b)=>b.bp-a.bp);
- const lastEnd=[];const base=190,H=view.clientHeight||500;
- const lanes=Math.max(4,Math.floor((H-base-20)/22));
- evs.forEach(e=>{
-  const x=pos(e.bp);
-  const w=e.name.length*6.5+14;
-  let lane=0;
-  while(lane<lanes && lastEnd[lane]>x-2)lane++;
-  if(lane>=lanes)lane=lanes-1;
+ const lastEnd=[];
+ eventsData.forEach(e=>{
+  const x=pos(e.bp),w=Math.max(70,(e.name.length*6+20)*zoom);
+  let lane=0;while(lane<lastEnd.length&&x<lastEnd[lane]+w)lane++;
+  if(lane>=lastEnd.length)lastEnd.push(0);
+  if(lane>=8)lane=7;
   lastEnd[lane]=x+w;
   const d=document.createElement('div');d.className='ev';d.style.left=x+'px';d.style.setProperty('--c',CAT[e.cat][1]);
   const top=base+lane*22;
@@ -242,7 +164,34 @@ function updWin(){
  win.style.width=(view.clientWidth/tot*W)+'px';
 }
 view.addEventListener('scroll',updWin);
+let miniDrag=null,suppressMiniClick=false;
+win.addEventListener('pointerdown',ev=>{
+ if(ev.button!==undefined&&ev.button!==0)return;
+ ev.preventDefault();
+ const wr=win.getBoundingClientRect();
+ miniDrag={id:ev.pointerId,offset:ev.clientX-wr.left,startX:ev.clientX,moved:false};
+ win.classList.add('dragging');
+ win.setPointerCapture(ev.pointerId);
+});
+win.addEventListener('pointermove',ev=>{
+ if(!miniDrag||ev.pointerId!==miniDrag.id)return;
+ ev.preventDefault();
+ if(Math.abs(ev.clientX-miniDrag.startX)>1)miniDrag.moved=true;
+ const mr=mini.getBoundingClientRect(),wr=win.getBoundingClientRect();
+ const span=Math.max(0,mr.width-wr.width),maxScroll=Math.max(0,tl.scrollWidth-view.clientWidth);
+ const left=Math.max(0,Math.min(span,ev.clientX-mr.left-miniDrag.offset));
+ view.scrollLeft=span?left/span*maxScroll:0;
+});
+function endMiniDrag(ev){
+ if(!miniDrag||ev.pointerId!==miniDrag.id)return;
+ suppressMiniClick=miniDrag.moved;
+ miniDrag=null;win.classList.remove('dragging');
+}
+win.addEventListener('pointerup',endMiniDrag);
+win.addEventListener('pointercancel',endMiniDrag);
+win.addEventListener('lostpointercapture',()=>{miniDrag=null;win.classList.remove('dragging')});
 mini.addEventListener('click',ev=>{
+ if(suppressMiniClick){suppressMiniClick=false;ev.preventDefault();return;}
  const r=mini.getBoundingClientRect();
  const bp=bpAt((ev.clientX-r.left)/r.width*tl.scrollWidth);
  view.scrollLeft=pos(bp)-view.clientWidth/2;
@@ -268,31 +217,17 @@ window.addEventListener('mouseup',()=>{dr=false;view.classList.remove('drag')});
 window.addEventListener('mousemove',e=>{if(dr)view.scrollLeft=sl-(e.clientX-sx)});
 window.addEventListener('keydown',e=>{
  if(e.target.tagName==='INPUT')return;
- if(e.key==='ArrowRight')view.scrollLeft+=200;
- if(e.key==='ArrowLeft')view.scrollLeft-=200;
- if(e.key==='+')setZoom(zoom*1.4);
- if(e.key==='-')setZoom(zoom/1.4);
+ if(e.key==='ArrowRight')view.scrollLeft+=100;
+ if(e.key==='ArrowLeft')view.scrollLeft-=100;
 });
-// Sauts
-[["Big Bang",Ga(13.8)],["Terre",Ga(4.5)],["Vie",Ga(3.8)],["Dinosaures",Ma(230)],["Humanité",Ma(3)],["Antiquité",Y(-3300)],["Moyen Âge",Y(476)],["Moderne",Y(1492)],["Aujourd'hui",0]].forEach(([n,bp])=>{
- const b=document.createElement('button');b.textContent=n;
- b.onclick=()=>{view.scrollTo({left:pos(bp)-80,behavior:'smooth'})};jump.appendChild(b);
-});
-// Filtres
-Object.entries(CAT).forEach(([k,[n,c]])=>{
- const b=document.createElement('button');b.textContent=n;b.style.borderColor=c;
- b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('off');render()};filters.appendChild(b);
-});
-// Recherche
-q.addEventListener('input',()=>{
- const s=q.value.trim().toLowerCase();let first=null;
- tl.querySelectorAll('.ev').forEach(d=>{
-  const hit=s&&(d._e.name.toLowerCase().includes(s)||d._e.desc.toLowerCase().includes(s));
-  d.classList.toggle('hl',!!hit);if(hit&&!first)first=d;
- });
- if(first)view.scrollTo({left:parseFloat(first.style.left)-200,behavior:'smooth'});
-});
-window.addEventListener('resize',render);
+function bindImgTip(el,e){el.addEventListener('mouseenter',ev=>showImgTip(ev,e));el.addEventListener('mousemove',moveImgTip);el.addEventListener('mouseleave',hideImgTip)}
+async function showImgTip(ev,e){
+ const tip=document.getElementById('imgTip');tip.style.display='block';tip.querySelector('.imageArea').textContent='Chargement…';tip.querySelector('.caption').textContent=e.name;moveImgTip(ev);
+ try{const r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(e.name));if(!r.ok)throw new Error('Image indisponible');const j=await r.json();if(j.thumbnail){tip.querySelector('.imageArea').innerHTML='<img src="'+j.thumbnail.source+'" alt="">';}else{tip.querySelector('.imageArea').textContent='Aucune image';}}
+ catch{tip.querySelector('.imageArea').textContent='Aucune image';}
+}
+function moveImgTip(ev){const tip=document.getElementById('imgTip');tip.style.left=Math.min(ev.clientX+14,innerWidth-280)+'px';tip.style.top=Math.min(ev.clientY+14,innerHeight-220)+'px'}
+function hideImgTip(){document.getElementById('imgTip').style.display='none'}
 async function init(){
  try{
   const response=await fetch('events.json');
