@@ -1,35 +1,91 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Frise du temps</title>
+<title>Frise du temps – du Big Bang à nos jours</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#10151c;color:#e8edf2}body{display:flex;flex-direction:column;overflow:hidden}header{padding:12px 16px;background:#18212b;border-bottom:1px solid #2d3947;display:flex;align-items:center;gap:12px;flex-wrap:wrap}h1{font-size:18px;margin:0;font-weight:650}button,input{font:inherit;color:inherit;background:#222e3a;border:1px solid #39495a;border-radius:6px;padding:6px 10px}button{cursor:pointer}button:hover{background:#2c3d4e}input{min-width:190px}#filters{display:flex;gap:5px;flex-wrap:wrap}#filters button{font-size:12px;padding:4px 7px;border-width:2px}#filters button.off{opacity:.4;text-decoration:line-through}#controls{display:flex;gap:5px;align-items:center;margin-left:auto}#linearScale{width:16px;height:16px;min-width:0}label{font-size:12px;display:flex;align-items:center;gap:4px}#jump{display:flex;gap:4px;flex-wrap:wrap}#jump button{font-size:11px;padding:3px 6px}
-#view{position:relative;flex:1;overflow:auto;cursor:grab;background:#10151c;scrollbar-color:#506174 #18212b}#view.drag{cursor:grabbing}#tl{position:relative;height:100%;min-height:500px;background:linear-gradient(to bottom,transparent 0,transparent 135px,#24303b 135px,#24303b 137px,transparent 137px)}#axis{position:absolute;top:0;left:0;height:48px;border-bottom:1px solid #3b4855}#axis .tick{position:absolute;top:0;height:48px;border-left:1px solid #33404b;padding:4px 3px;font-size:10px;color:#aab5c0;white-space:nowrap}#axis .tick:before{content:"";position:absolute;bottom:0;left:-1px;height:7px;border-left:1px solid #72808d}
-.seg{position:absolute;top:52px;height:28px;border-radius:4px;border:1px solid #ffffff42;overflow:hidden;cursor:pointer;z-index:2;min-width:2px}.seg.row2{top:84px;height:25px}.seg.row3{top:113px;height:22px}.seg.row4{top:139px;height:20px}.segLabel{font-size:10px;white-space:nowrap;padding:2px 4px;display:block;text-shadow:0 1px 2px #000;pointer-events:none}.seg:hover{filter:brightness(1.25);z-index:5}
-.ev{position:absolute;top:0;z-index:4;cursor:pointer}.stem{position:absolute;left:4px;width:1px;background:var(--c);opacity:.55}.dot{position:absolute;left:0;width:9px;height:9px;border-radius:50%;background:var(--c);border:1px solid #fff}.lbl{position:absolute;left:7px;white-space:nowrap;font-size:10px;color:#d5dbe1;background:#10151ce8;padding:1px 3px;border-radius:3px;border-left:2px solid var(--c);max-width:180px;overflow:hidden;text-overflow:ellipsis}.ev:hover{z-index:7}.ev:hover .lbl,.ev.hl .lbl{color:white;background:#33404b;max-width:none}.ev.hl .dot{box-shadow:0 0 0 4px #ffffff50}
-#miniWrap{height:46px;background:#18212b;border-top:1px solid #2d3947;padding:7px 12px;flex:none}#mini{height:30px;position:relative;background:#252f39;border-radius:4px;overflow:hidden}.m{position:absolute;top:3px;height:8px;opacity:.8;border-radius:2px}.e{position:absolute;top:14px;width:2px;height:10px;background:#e4c45c}.win{position:absolute;top:0;height:100%;border:2px solid #fff9;background:#ffffff12;cursor:grab;min-width:12px;border-radius:3px}.win.dragging{cursor:grabbing}#panel{display:none;position:fixed;right:16px;top:76px;width:min(360px,calc(100vw - 32px));max-height:65vh;overflow:auto;background:#202b36;border:1px solid #465565;border-radius:10px;padding:14px;z-index:12;box-shadow:0 10px 35px #0009}#panel h2{font-size:16px;margin:0 0 6px}#panel p{font-size:13px;line-height:1.45;margin:5px 0}#imgTip{display:none;position:fixed;z-index:20;width:min(320px,80vw);background:#202b36;border:1px solid #607080;border-radius:8px;padding:7px;pointer-events:none;box-shadow:0 8px 28px #0009}#imgTip .imageArea{height:180px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#b9c5d0}#imgTip img{max-width:100%;max-height:100%;object-fit:contain}#imgTip .caption{font-size:12px;font-weight:600;padding-top:4px}#out{display:none}
+:root{--bg:#0f1220;--panel:#181c30;--txt:#e8eaf3;--mut:#8b91ad;--line:#3a4066}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:8px 12px;background:var(--panel);display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+header h1{font-size:16px;margin:0 10px 0 0}
+button,input{background:#252a47;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px 9px;font-size:13px;cursor:pointer}
+button:hover{background:#343b66}
+button.off{opacity:.35}
+input{cursor:text;width:170px}
+#jump,#filters{display:flex;flex-wrap:wrap;gap:5px}
+#view{flex:1;position:relative;overflow-x:scroll;overflow-y:hidden;cursor:grab}
+#view.drag{cursor:grabbing}
+#tl{position:relative;height:100%}
+.seg{position:absolute;top:70px;height:34px;line-height:34px;font-size:12px;padding:0 6px;white-space:nowrap;overflow:visible;border-right:1px solid #0008;color:#fff;font-weight:600;cursor:pointer;user-select:none}
+.seg .segLabel{position:sticky;left:0;display:block;width:100%;height:100%;overflow:hidden;white-space:nowrap}
+.row2{top:106px;height:26px;line-height:26px;font-size:11px;opacity:.85}
+.row3{top:134px;height:24px;line-height:24px;font-size:11px;opacity:.7}
+.row4{top:160px;height:22px;line-height:22px;font-size:11px;opacity:.7}
+#axis{position:absolute;top:40px;left:0;right:0;height:26px}
+.tick{position:absolute;top:0;font-size:10px;color:var(--mut);border-left:1px solid var(--line);padding-left:3px;height:20px}
+.ev{position:absolute;width:0}
+.ev .dot{position:absolute;left:-5px;width:10px;height:10px;border-radius:50%;border:2px solid #fff;cursor:pointer;background:var(--c)}
+.ev .stem{position:absolute;left:0;width:1px;background:var(--c);opacity:.6}
+.ev .lbl{position:absolute;left:4px;font-size:11px;white-space:nowrap;cursor:pointer;background:#0009;padding:1px 4px;border-radius:3px;border-left:2px solid var(--c)}
+.ev.hl .dot{box-shadow:0 0 0 4px #ffd54a}
+.ev:hover{z-index:5}
+#mini{height:46px;background:var(--panel);border-top:1px solid var(--line);position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
+#mini .m{position:absolute;top:4px;height:8px}
+#mini .e{position:absolute;top:18px;width:2px;height:10px;background:#fff8}
+#win{position:absolute;top:0;bottom:0;border:2px solid #ffd54a;background:#ffd54a22;pointer-events:auto;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+#win.dragging{cursor:grabbing}
+#panel{position:fixed;right:12px;bottom:60px;width:340px;max-width:90vw;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:none;box-shadow:0 8px 30px #0009;z-index:20}
+#panel h2{margin:0 0 4px;font-size:17px}
+#panel .d{color:#ffd54a;font-size:13px;margin-bottom:8px}
+#panel .c{font-size:11px;color:var(--mut);margin-bottom:6px}
+#panel p{margin:0;font-size:13px;line-height:1.45}
+#panel .x{position:absolute;top:6px;right:8px}
+#imgTip{position:fixed;display:none;width:max-content;max-width:min(260px,calc(100vw - 24px));padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px #000a;z-index:40;pointer-events:none}
+#imgTip .imageArea{min-width:180px;min-height:54px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11px}
+#imgTip img{display:block;max-width:100%;max-height:190px;object-fit:contain;border-radius:4px}
+#imgTip .caption{margin-top:5px;font-size:11px;line-height:1.3;color:var(--txt);white-space:normal}
 </style>
 </head>
 <body>
 <header>
-<h1>Frise du temps</h1>
-<input id="q" placeholder="Rechercher un événement…" aria-label="Rechercher">
-<div id="filters"></div>
+<h1>⏳ Frise du temps</h1>
+<button id="zo">−</button><button id="zi">+</button><button id="out" style="display:none">Dézoomer</button>
+<label><input id="linearScale" type="checkbox" style="width:auto;cursor:pointer"> Échelle linéaire</label>
+<input id="q" placeholder="Rechercher…">
 <div id="jump"></div>
-<div id="controls"><label><input id="linearScale" type="checkbox" checked>Échelle linéaire</label><button id="zo" title="Zoom arrière">−</button><button id="zi" title="Zoom avant">+</button><button id="out">Retour</button></div>
+<div id="filters"></div>
 </header>
-<div id="loadError" role="alert" style="display:none;position:fixed;inset:12px 12px auto;background:#7b2525;color:#fff;padding:12px;border-radius:8px;z-index:30"></div>
 <div id="view"><div id="tl"><div id="axis"></div></div></div>
-<div id="miniWrap"><div id="mini"><div id="win" class="win"></div></div></div>
-<div id="panel"><h2 id="pt"></h2><p id="pc"></p><p id="pd"></p><p id="pp"></p></div>
-<div id="imgTip"><div class="imageArea"></div><div class="caption"></div></div>
+<div id="mini"><div id="win"></div></div>
+<div id="panel"><button class="x" onclick="panel.style.display='none'">✕</button><div class="c" id="pc"></div><h2 id="pt"></h2><div class="d" id="pd"></div><p id="pp"></p></div>
+<div id="loadError" role="alert" style="display:none;position:fixed;inset:12px 12px auto;background:#7b2525;color:#fff;padding:12px;border-radius:8px;z-index:30"></div>
+<div id="imgTip" aria-hidden="true"><div class="imageArea">Chargement…</div><div class="caption"></div></div>
+
 <script>
-const NOW=2026, START=13.8e9, TOTAL=30000;
-let zoom=1,linearScale=true,focusOverride=false;
-const Ga=x=>x*1e9,Ma=x=>x*1e6,ka=x=>x*1e3,Y=x=>NOW-x;
-const SCALE=[[13.8e9,4.6e9,9000],[4.6e9,541e6,7500],[541e6,66e6,4500],[66e6,0,9000]];
+/* Dates en "années avant aujourd'hui (BP)" ; l'an 2026 = 0.
+   Pour une année calendaire Y : bp = 2026 - Y */
+const NOW=2026;
+const Y=y=>NOW-y;
+const Ma=x=>x*1e6, Ga=x=>x*1e9, ka=x=>x*1e3;
+
+/* Échelle non linéaire par segments : [bp_debut(ancien), bp_fin(récent), largeur_px] */
+const SCALE=[
+ [Ga(13.8),Ga(4.6),1100],
+ [Ga(4.6),Ga(0.541),1500],
+ [Ma(541),Ma(66),1500],
+ [Ma(66),Ma(2.58),1300],
+ [Ma(2.58),Ma(12e-3),1300],
+ [Ma(12e-3),Y(-3000),1300],
+ [Y(-3000),Y(500),1400],
+ [Y(500),Y(1500),1300],
+ [Y(1500),Y(1800),1300],
+ [Y(1800),0,2600]
+];
+const TOTAL=SCALE.reduce((a,s)=>a+s[2],0);
+const START=SCALE[0][0];
+let zoom=1,linearScale=false,focusOverride=false;
 function pos(bp){
  if(linearScale&&!focusOverride){
   if(bp>START)return 0;
