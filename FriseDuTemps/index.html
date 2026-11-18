@@ -70,21 +70,8 @@ const NOW=2026;
 const Y=y=>NOW-y;
 const Ma=x=>x*1e6, Ga=x=>x*1e9, ka=x=>x*1e3;
 
-/* Échelle non linéaire par segments : [bp_debut(ancien), bp_fin(récent), largeur_px] */
-const SCALE=[
- [Ga(13.8),Ga(4.6),1100],
- [Ga(4.6),Ga(0.541),1500],
- [Ma(541),Ma(66),1500],
- [Ma(66),Ma(2.58),1300],
- [Ma(2.58),Ma(12e-3),1300],
- [Ma(12e-3),Y(-3000),1300],
- [Y(-3000),Y(500),1400],
- [Y(500),Y(1500),1300],
- [Y(1500),Y(1800),1300],
- [Y(1800),0,2600]
-];
-const TOTAL=SCALE.reduce((a,s)=>a+s[2],0);
-const START=SCALE[0][0];
+/* L’échelle de la frise est fournie par periods.json. */
+let SCALE=[],TOTAL=0,START=0;
 let zoom=1,linearScale=false,focusOverride=false;
 function pos(bp){
  if(linearScale&&!focusOverride){
@@ -117,7 +104,7 @@ const active=new Set(Object.keys(CAT));
 function fmt(bp){if(bp>=1e9)return (bp/1e9).toFixed(1).replace('.',',').replace(/,0$/,'')+' Ga';if(bp>=1e6)return Math.round(bp/1e6)+' Ma';if(bp>=1e4)return Math.round(bp).toLocaleString('fr-FR').replace(/\u202f/g,' ')+' a';const y=Math.round(NOW-bp);return y<=0?(Math.abs(y)+' av. J.-C.'):String(y);}
 function render(){
  hideImgTip();tl.style.width=TOTAL*zoom+'px';tl.querySelectorAll('.seg,.ev,.tick').forEach(n=>n.remove());
- const all=periodInfo.map(p=>[p.name,p.startBp,p.endBp,p.color,p.level]);all.forEach(([n,a,b,c,l])=>{const d=document.createElement('div');d.className='seg'+(l==2?' row2':l==3?' row3':l==4?' row4':'');if(l==1)d.style.top='70px';const x1=pos(a),x2=pos(b);d.style.left=x1+'px';d.style.width=Math.max(2,x2-x1)+'px';d.style.background=c;const label=document.createElement('span');label.className='segLabel';if(n==='Quaternaire')label.style.zIndex='1';label.textContent=n;d.appendChild(label);d.title=n+' ('+fmt(a)+' → '+fmt(b)+')';const info=periodInfo.find(e=>e.name===n);bindImgTip(d,info);d._period={name:n,start:a,end:b,color:c,info};d.addEventListener('click',()=>{if(draggedView){draggedView=false;return;}showPeriod(d._period);});tl.appendChild(d);});
+ const byLevel=new Map();periodInfo.forEach(p=>{if(!byLevel.has(p.level))byLevel.set(p.level,[]);byLevel.get(p.level).push(p);});const foregroundRank=new Map();byLevel.forEach(items=>items.slice().sort((a,b)=>(a.startBp-a.endBp)-(b.startBp-b.endBp)).forEach((p,i)=>foregroundRank.set(p,i+1)));const all=periodInfo.map(p=>[p.name,p.startBp,p.endBp,p.color,p.level,p]);all.forEach(([n,a,b,c,l,info])=>{const d=document.createElement('div');d.className='seg'+(l==2?' row2':l==3?' row3':l==4?' row4':'');if(l==1)d.style.top='70px';const x1=pos(a),x2=pos(b);d.style.left=x1+'px';d.style.width=Math.max(2,x2-x1)+'px';d.style.background=c;d.style.zIndex=String(foregroundRank.get(info));const label=document.createElement('span');label.className='segLabel';label.textContent=n;d.appendChild(label);d.title=n+' ('+fmt(a)+' → '+fmt(b)+')';bindImgTip(d,info);d._period={name:n,start:a,end:b,color:c,info};d.addEventListener('click',()=>{if(draggedView){draggedView=false;return;}showPeriod(d._period);});tl.appendChild(d);});
  const ticks=[];if(linearScale&&!focusOverride){const raw=START/Math.max(4,Math.min(1000,Math.round(TOTAL*zoom/160)));const pow=10**Math.floor(Math.log10(raw)),ratio=raw/pow;const step=(ratio<=1?1:ratio<=2?2:ratio<=5?5:10)*pow;for(let bp=START;bp>0;bp-=step)ticks.push(bp);ticks.push(0);}else{SCALE.forEach(([a,b,w])=>{const n=Math.max(4,Math.round(w*zoom/160));for(let i=0;i<n;i++)ticks.push(a-(a-b)*i/n);});ticks.push(0);}
  ticks.forEach(bp=>{const t=document.createElement('div');t.className='tick';t.style.left=pos(bp)+'px';t.textContent=fmt(bp);axis.appendChild(t);});
  const evs=eventsData.filter(e=>e.type!=='period'&&active.has(e.cat)).sort((a,b)=>b.bp-a.bp);const lastEnd=[];const base=190,H=view.clientHeight||500;const lanes=Math.max(4,Math.floor((H-base-20)/22));
@@ -151,7 +138,7 @@ window.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.
 Object.entries(CAT).forEach(([k,[n,c]])=>{const b=document.createElement('button');b.textContent=n;b.style.borderColor=c;b.onclick=()=>{active.has(k)?active.delete(k):active.add(k);b.classList.toggle('off');render();};filters.appendChild(b);});
 q.addEventListener('input',()=>{const s=q.value.trim().toLowerCase();let first=null;tl.querySelectorAll('.ev').forEach(d=>{const hit=s&&(d._e.name.toLowerCase().includes(s)||d._e.desc.toLowerCase().includes(s));d.classList.toggle('hl',!!hit);if(hit&&!first)first=d;});if(first)view.scrollTo({left:parseFloat(first.style.left)-200,behavior:'smooth'});});
 window.addEventListener('resize',render);
-async function init(){try{const [eventsResponse,periodsResponse]=await Promise.all([fetch('events.json'),fetch('periods.json')]);if(!eventsResponse.ok)throw new Error('HTTP '+eventsResponse.status+' (events.json)');if(!periodsResponse.ok)throw new Error('HTTP '+periodsResponse.status+' (periods.json)');const [data,periods]=await Promise.all([eventsResponse.json(),periodsResponse.json()]);if(!Array.isArray(data)||data.some(e=>!e||typeof e.name!=='string'||typeof e.desc!=='string'||(e.type==='period'?typeof e.startBp!=='number'||typeof e.endBp!=='number':typeof e.bp!=='number'||typeof e.cat!=='string'||typeof e.date!=='string')))throw new Error('Format JSON inattendu dans events.json');if(!Array.isArray(periods)||periods.some(p=>!p||typeof p.name!=='string'||typeof p.startBp!=='number'||!Number.isFinite(p.startBp)||typeof p.endBp!=='number'||!Number.isFinite(p.endBp)||typeof p.color!=='string'||typeof p.level!=='number'||!Number.isInteger(p.level)||p.level<1||p.level>4||typeof p.desc!=='string'||(p.img!==undefined&&typeof p.img!=='string')))throw new Error('Format JSON inattendu dans periods.json');eventsData=data.filter(e=>e.type!=='period');periodInfo=periods;render();view.scrollLeft=0;}catch(error){const box=document.getElementById('loadError');box.textContent='Impossible de charger les événements. Ouvrez cette page depuis un serveur web local ou en ligne (pas en file://), puis réessayez. '+error.message;box.style.display='block';console.error('Chargement des événements impossible:',error);}}
+async function init(){try{const [eventsResponse,periodsResponse]=await Promise.all([fetch('events.json'),fetch('periods.json')]);if(!eventsResponse.ok)throw new Error('HTTP '+eventsResponse.status+' (events.json)');if(!periodsResponse.ok)throw new Error('HTTP '+periodsResponse.status+' (periods.json)');const [data,periods]=await Promise.all([eventsResponse.json(),periodsResponse.json()]);if(!Array.isArray(data)||data.some(e=>!e||typeof e.name!=='string'||typeof e.desc!=='string'||(e.type==='period'?typeof e.startBp!=='number'||typeof e.endBp!=='number':typeof e.bp!=='number'||typeof e.cat!=='string'||typeof e.date!=='string')))throw new Error('Format JSON inattendu dans events.json');if(!Array.isArray(periods)||periods.some(p=>!p||typeof p.name!=='string'||typeof p.startBp!=='number'||!Number.isFinite(p.startBp)||typeof p.endBp!=='number'||!Number.isFinite(p.endBp)||typeof p.color!=='string'||typeof p.level!=='number'||!Number.isInteger(p.level)||p.level<1||p.level>4||typeof p.desc!=='string'||(p.img!==undefined&&typeof p.img!=='string')))throw new Error('Format JSON inattendu dans periods.json');const scaleConfig=periods.find(p=>Array.isArray(p.timelineScale))?.timelineScale;if(!scaleConfig||scaleConfig.length===0||scaleConfig.some(s=>!Array.isArray(s)||s.length!==3||s.some(v=>typeof v!=='number'||!Number.isFinite(v))||s[0]<=s[1]||s[2]<=0))throw new Error('Échelle temporelle absente ou invalide dans periods.json');SCALE=scaleConfig.map(s=>[...s]);TOTAL=SCALE.reduce((a,s)=>a+s[2],0);START=SCALE[0][0];eventsData=data.filter(e=>e.type!=='period');periodInfo=periods;render();view.scrollLeft=0;}catch(error){const box=document.getElementById('loadError');box.textContent='Impossible de charger les événements. Ouvrez cette page depuis un serveur web local ou en ligne (pas en file://), puis réessayez. '+error.message;box.style.display='block';console.error('Chargement des événements impossible:',error);}}
 init();
 </script>
 <script>
