@@ -36,6 +36,7 @@
 {"name": "Divergence humain-chimpanzé", "bp": 7000000, "cat": "humain", "date": "~7-6 Ma", "desc": "Séparation des lignées humaine et chimpanzé."},
 {"name": "Glaciations quaternaires", "bp": 2580000, "cat": "terre", "date": "2,58 Ma", "desc": "Alternance de périodes glaciaires et interglaciaires.", "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Iceage%20north-glacial%20hg.png?width=400"},
 {"name": "Premiers outils de pierre", "bp": 2600000, "cat": "humain", "date": "~2,6 Ma", "desc": "Culture oldowayenne."},
+{"name": "Toumaï", "bp": 7000000, "cat": "humain", "date": "~7 Ma (6-7 Ma)", "desc": "Sahelanthropus tchadensis, crâne découvert au Tchad en 2001 par Michel Brunet. L'un des plus anciens hominidés connus, probablement proche de la divergence avec les chimpanzés.", "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Sahelanthropus%20tchadensis%20-%20TM%20266-01-060-1.jpg?width=400"},
 {"name": "Homo habilis", "bp": 2400000, "cat": "humain", "date": "~2,4 Ma", "desc": "Premier représentant du genre Homo."},
 {"name": "Homo erectus", "bp": 1900000, "cat": "humain", "date": "~1,9 Ma", "desc": "Premier hominidé à sortir d'Afrique.", "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Homo%20erectus.jpg?width=400"},
 {"name": "Maîtrise du feu", "bp": 800000, "cat": "humain", "date": "~1 Ma – 400 ka", "desc": "Usage contrôlé du feu par Homo erectus."},
