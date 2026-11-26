@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 702,
+  "total": 724,
   "themes": [
     {
       "nom": "Animaux",
@@ -95,13 +95,13 @@
     {
       "nom": "Espace",
       "slug": "espace",
-      "nombre": 28,
+      "nombre": 50,
       "fichiers": [
         {
           "fichier": "questions/espace/espace-001.json",
-          "nombre": 28,
-          "ageMin": 7,
-          "ageMax": 63
+          "nombre": 50,
+          "ageMin": 5,
+          "ageMax": 60
         }
       ]
     },
