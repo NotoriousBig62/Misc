@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 557,
+  "total": 680,
   "themes": [
     {
       "nom": "Animaux",
@@ -31,11 +31,11 @@
     {
       "nom": "Cinéma et musique",
       "slug": "cinema-et-musique",
-      "nombre": 7,
+      "nombre": 50,
       "fichiers": [
         {
           "fichier": "questions/cinema-et-musique/cinema-et-musique-001.json",
-          "nombre": 7,
+          "nombre": 50,
           "ageMin": 6,
           "ageMax": 62
         }
@@ -57,10 +57,16 @@
     {
       "nom": "Cuisine et gastronomie",
       "slug": "cuisine-et-gastronomie",
-      "nombre": 50,
+      "nombre": 100,
       "fichiers": [
         {
           "fichier": "questions/cuisine-et-gastronomie/cuisine-et-gastronomie-001.json",
+          "nombre": 50,
+          "ageMin": 7,
+          "ageMax": 63
+        },
+        {
+          "fichier": "questions/cuisine-et-gastronomie/cuisine-et-gastronomie-002.json",
           "nombre": 50,
           "ageMin": 7,
           "ageMax": 63
@@ -154,11 +160,11 @@
     {
       "nom": "Musique",
       "slug": "musique",
-      "nombre": 20,
+      "nombre": 50,
       "fichiers": [
         {
           "fichier": "questions/musique/musique-001.json",
-          "nombre": 20,
+          "nombre": 50,
           "ageMin": 6,
           "ageMax": 62
         }
